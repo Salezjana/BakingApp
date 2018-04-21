@@ -2,11 +2,18 @@ package mrodkiewicz.pl.bakingapp.ui;
 
 import android.os.Bundle;
 
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import mrodkiewicz.pl.bakingapp.BakingApp;
 import mrodkiewicz.pl.bakingapp.R;
+import mrodkiewicz.pl.bakingapp.api.APIService;
+import mrodkiewicz.pl.bakingapp.models.Recipe;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class MainActivity extends BaseAppCompatActivity {
@@ -36,7 +43,20 @@ public class MainActivity extends BaseAppCompatActivity {
     private void loadRecipes() {
         Timber.d("loadRecipes isOnline " + isInternetEnable());
         if (isInternetEnable()){
+            APIService apiService = BakingApp.getClient().create(APIService.class);
+            Call<Recipe> call;
+            call = apiService.getRecipe();
+            call.enqueue(new Callback<Recipe>() {
+                @Override
+                public void onResponse(Call<Recipe> call, Response<Recipe> response) {
+                    Timber.d("Callback<Recipe> onResponse" + response.toString());
+                }
 
+                @Override
+                public void onFailure(Call<Recipe> call, Throwable t) {
+
+                }
+            });
         }
     }
 }

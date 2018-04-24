@@ -61,6 +61,7 @@ public class MainActivity extends BaseAppCompatActivity {
                 @Override
                 public void onFailure(Call<List<Recipe>> call, Throwable t) {
                     Timber.d("onFailure");
+                    Timber.d("onFailure Throwable" + t);
                 }
             });
         }

@@ -8,6 +8,7 @@ import java.util.List;
 import mrodkiewicz.pl.bakingapp.BakingApp;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.api.APIService;
+import mrodkiewicz.pl.bakingapp.db.RecipeDatabase;
 import mrodkiewicz.pl.bakingapp.models.Recipe;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
@@ -25,6 +26,7 @@ public class MainActivity extends BaseAppCompatActivity {
         setContentView(R.layout.main_activity);
 
         recipeArrayList = new ArrayList<>();
+
 
         setupView(savedInstanceState);
         loadRecipes();

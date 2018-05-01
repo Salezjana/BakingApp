@@ -8,8 +8,7 @@ import java.util.List;
 import mrodkiewicz.pl.bakingapp.BakingApp;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.api.APIService;
-import mrodkiewicz.pl.bakingapp.db.RecipeDatabase;
-import mrodkiewicz.pl.bakingapp.models.Recipe;
+import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
 import retrofit2.Call;
@@ -17,7 +16,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MainActivity extends BaseAppCompatActivity {
+public class MainActivity extends BaseAppCompatActivity{
     private ArrayList<Recipe> recipeArrayList;
 
     @Override
@@ -25,11 +24,22 @@ public class MainActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        recipeArrayList = new ArrayList<>();
-
+        recipeArrayList = new ArrayList<Recipe>();
 
         setupView(savedInstanceState);
-        loadRecipes();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                recipeArrayList.addAll(BakingApp.getDB().getRecipeDoa().getAll());
+                if (recipeArrayList.isEmpty()){
+                    loadRecipes();
+                }else{
+
+                }
+
+            }
+        }).start();
     }
 
     private void setupView(Bundle savedInstanceState) {
@@ -57,6 +67,7 @@ public class MainActivity extends BaseAppCompatActivity {
                 public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                     Timber.d("onResponse");
                     recipeArrayList.addAll(response.body());
+                    listToDatabse(recipeArrayList);
                     Timber.d("beka z typa " + recipeArrayList.size());
                 }
 
@@ -68,4 +79,9 @@ public class MainActivity extends BaseAppCompatActivity {
             });
         }
     }
+
+    private void listToDatabse(List<Recipe> list) {
+
+    }
+
 }

@@ -1,11 +1,10 @@
-package mrodkiewicz.pl.bakingapp.models;
+package mrodkiewicz.pl.bakingapp.db.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -30,6 +29,8 @@ public class Recipe {
     @ColumnInfo(name = "image")
     @SerializedName("image")
     private String image;
+
+    public Recipe(){}
 
     public Integer getId() {
         return id;

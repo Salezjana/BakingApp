@@ -1,12 +1,14 @@
 package mrodkiewicz.pl.bakingapp;
 
 import android.app.Application;
+import android.arch.persistence.room.Room;
 
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.util.concurrent.TimeUnit;
 
+import mrodkiewicz.pl.bakingapp.db.RecipeDatabase;
 import mrodkiewicz.pl.bakingapp.helper.Config;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -17,17 +19,20 @@ import timber.log.Timber;
 public class BakingApp extends Application {
     public static OkHttpClient okHttpClient;
     public static Retrofit retrofit;
+    public static RecipeDatabase recipeDatabase;
 
     public static int TIMEOUT_SECONDS = 1000;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        recipeDatabase = Room.databaseBuilder(getApplicationContext(),RecipeDatabase.class,Config.DATABASE_RECIPE).build();
 
         if (BuildConfig.DEBUG){
+            final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             Timber.plant(new Timber.DebugTree());
             Stetho.initializeWithDefaults(this);
             okHttpClient = new OkHttpClient.Builder()
@@ -46,6 +51,9 @@ public class BakingApp extends Application {
 
 
 
+    }
+    public static RecipeDatabase getDB() {
+        return recipeDatabase;
     }
 
     public static Retrofit getClient() {

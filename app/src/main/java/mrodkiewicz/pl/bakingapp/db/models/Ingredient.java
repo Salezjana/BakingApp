@@ -1,6 +1,5 @@
-package mrodkiewicz.pl.bakingapp.models;
+package mrodkiewicz.pl.bakingapp.db.models;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Ingredient {
@@ -10,6 +9,8 @@ public class Ingredient {
     private String measure;
     @SerializedName("ingredient")
     private String ingredient;
+
+    public Ingredient(){}
 
     public Double getQuantity() {
         return quantity;

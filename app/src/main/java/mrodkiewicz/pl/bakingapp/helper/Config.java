@@ -12,8 +12,8 @@ public class Config {
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    public static String DATABASE_RECIPE = "recipesDB";
-    public static String TABLE_RECIPE = "recipes";
+    public static final String DATABASE_RECIPE = "recipesDB";
+    public static final String TABLE_RECIPE = "recipes";
 
     public static final String CONTENT_DIR_TYPE =
             ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + DATABASE_RECIPE;

@@ -1,32 +1,28 @@
 package mrodkiewicz.pl.bakingapp.db.models;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-@Entity
+
+
 public class Recipe {
-    @PrimaryKey
     @SerializedName("id")
     private Integer id;
-    @ColumnInfo(name = "name")
+
     @SerializedName("name")
     private String name;
-    @Embedded(prefix = "ingredients_")
+
     @SerializedName("ingredients")
     private List<Ingredient> ingredients = null;
-    @Embedded(prefix = "steps_")
+
     @SerializedName("steps")
     private List<Step> steps = null;
-    @ColumnInfo(name = "servings")
+
     @SerializedName("servings")
     private Integer servings;
-    @ColumnInfo(name = "image")
+
     @SerializedName("image")
     private String image;
 

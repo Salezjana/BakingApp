@@ -5,6 +5,9 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import static mrodkiewicz.pl.bakingapp.helper.Config.RecipeEntry.KEY_ID;
+import static mrodkiewicz.pl.bakingapp.helper.Config.RecipeEntry.KEY_NAME;
+
 public class Config {
     public static String BAKING_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
@@ -13,7 +16,55 @@ public class Config {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String DATABASE_RECIPE = "recipesDB";
+    public static final int DATABASE_VERSION_RECIPE = 1;
     public static final String TABLE_RECIPE = "recipes";
+    public static final String TABLE_STEP = "steps";
+    public static final String TABLE_INGREDIENT = "ingredients";
+
+
+    public static final class RecipeEntry implements BaseColumns{
+        public static String KEY_ID = "_ID";
+        public static String KEY_NAME = "name";
+    }
+
+    public static final class StepEntry implements BaseColumns{
+        public static String KEY_ID = "_ID";
+        public static String KEY_FROM_RECIPE_WITH_ID = "fromRecipeWithID";
+        public static String KEY_SHORT_DESCRIPTION = "shortDescription";
+        public static String KEY_DESCRIPTION = "description";
+        public static String KEY_VIDEO_URL = "videoURL";
+        public static String KEY_THUMBNAUL_URL = "thumbnailURL";
+    }
+
+    public static final class IngredientEntry implements BaseColumns{
+        public static String KEY_ID = "_ID";
+        public static String KEY_FROM_RECIPE_WITH_ID = "fromRecipeWithID";
+        public static String KEY_QUANTITY = "quantity";
+        public static String KEY_MEASURE = "measure";
+        public static String KEY_INGREDIENT = "ingredient";
+
+    }
+
+    public static String DATABASE_CREATE_RECIPE = "CREATE TABLE " + Config.TABLE_RECIPE + "("
+            + RecipeEntry.KEY_ID + " INTEGER NOT NULL PRIMARY KEY,"
+            + RecipeEntry.KEY_NAME + " TEXT NOT NULL"
+            + ")";
+    public static String DATABASE_CREATE_STEP = "CREATE TABLE " + Config.TABLE_STEP + "("
+            + StepEntry.KEY_ID + " INTEGER NOT NULL PRIMARY KEY,"
+            + StepEntry.KEY_FROM_RECIPE_WITH_ID + " INTEGER NOT NULL,"
+            + StepEntry.KEY_SHORT_DESCRIPTION + " TEXT NOT NULL,"
+            + StepEntry.KEY_DESCRIPTION + " TEXT NOT NULL,"
+            + StepEntry.KEY_VIDEO_URL + " TEXT NOT NULL,"
+            + StepEntry.KEY_THUMBNAUL_URL + " TEXT NOT NULL"
+            + ")";
+    public static String DATABASE_CREATE_INGREDIENT = "CREATE TABLE " + Config.TABLE_INGREDIENT + "("
+            + IngredientEntry.KEY_ID + " INTEGER NOT NULL PRIMARY KEY,"
+            + IngredientEntry.KEY_FROM_RECIPE_WITH_ID + " INTEGER NOT NULL,"
+            + IngredientEntry.KEY_QUANTITY + " TEXT NOT NULL,"
+            + IngredientEntry.KEY_MEASURE + " TEXT NOT NULL,"
+            + IngredientEntry.KEY_INGREDIENT + " TEXT NOT NULL"
+            + ")";
+
 
     public static final String CONTENT_DIR_TYPE =
             ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + DATABASE_RECIPE;

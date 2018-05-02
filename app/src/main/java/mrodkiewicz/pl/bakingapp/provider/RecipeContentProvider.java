@@ -1,6 +1,5 @@
 package mrodkiewicz.pl.bakingapp.provider;
 
-import android.arch.persistence.room.Room;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;

@@ -1,5 +1,7 @@
 package mrodkiewicz.pl.bakingapp.ui;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.List;
 import mrodkiewicz.pl.bakingapp.BakingApp;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.api.APIService;
+import mrodkiewicz.pl.bakingapp.db.RecipeDatabaseHelper;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
@@ -18,6 +21,7 @@ import timber.log.Timber;
 
 public class MainActivity extends BaseAppCompatActivity{
     private ArrayList<Recipe> recipeArrayList;
+    private RecipeDatabaseHelper recipeDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,20 +30,11 @@ public class MainActivity extends BaseAppCompatActivity{
 
         recipeArrayList = new ArrayList<Recipe>();
 
+        recipeDatabaseHelper = new RecipeDatabaseHelper(this);
+        SQLiteDatabase db = recipeDatabaseHelper.getReadableDatabase();
+
         setupView(savedInstanceState);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                recipeArrayList.addAll(BakingApp.getDB().getRecipeDoa().getAll());
-                if (recipeArrayList.isEmpty()){
-                    loadRecipes();
-                }else{
-
-                }
-
-            }
-        }).start();
     }
 
     private void setupView(Bundle savedInstanceState) {

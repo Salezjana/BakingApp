@@ -1,26 +1,19 @@
 package mrodkiewicz.pl.bakingapp.db.models;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
+
 
 import com.google.gson.annotations.SerializedName;
 
-@Entity
+
 public class Step {
     @SerializedName("id")
-    @PrimaryKey
     private Integer id;
-    @ColumnInfo(name = "shortDescription")
     @SerializedName("shortDescription")
     private String shortDescription;
-    @ColumnInfo(name = "description")
     @SerializedName("description")
     private String description;
-    @ColumnInfo(name = "videoURL")
     @SerializedName("videoURL")
     private String videoURL;
-    @ColumnInfo(name = "thumbnailURL")
     @SerializedName("thumbnailURL")
     private String thumbnailURL;
 

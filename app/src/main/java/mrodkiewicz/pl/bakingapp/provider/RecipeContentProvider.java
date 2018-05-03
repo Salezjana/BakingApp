@@ -5,19 +5,25 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.List;
+
 import mrodkiewicz.pl.bakingapp.db.RecipeDatabaseHelper;
+import mrodkiewicz.pl.bakingapp.db.models.Recipe;
+import mrodkiewicz.pl.bakingapp.helper.ArrayListConverter;
 import mrodkiewicz.pl.bakingapp.helper.Config;
+import timber.log.Timber;
 
 public class RecipeContentProvider extends ContentProvider {
     private static final int RECIPE = 100;
     private static final int RECIPE_BY_ID = 101;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private static RecipeDatabaseHelper recipeDatabaseHelper;
-
+    private ArrayListConverter arrayListConverter;
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = Config.CONTENT_AUTHORITY;
@@ -32,6 +38,7 @@ public class RecipeContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         recipeDatabaseHelper = new RecipeDatabaseHelper(getContext());
+        arrayListConverter = new ArrayListConverter();
         return true;
     }
 
@@ -40,9 +47,11 @@ public class RecipeContentProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         switch (sUriMatcher.match(uri)) {
             case RECIPE: {
-                return (Cursor) recipeDatabaseHelper.getAllRecipe();
+                Timber.d("RECIPE");
+                return getCursorFromList(recipeDatabaseHelper.getAllRecipe());
             }
             case RECIPE_BY_ID: {
+                Timber.d("RECIPE_BY_ID");
                 return (Cursor) recipeDatabaseHelper.getRecipe((int) ContentUris.parseId(uri));
             }
             default: {
@@ -83,6 +92,24 @@ public class RecipeContentProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         return 0;
+    }
+    public Cursor getCursorFromList(List<Recipe> recipeList) {
+        MatrixCursor cursor = new MatrixCursor(
+                new String[] {Config.RecipeEntry.KEY_ID, Config.RecipeEntry.KEY_NAME,Config.RecipeEntry.KEY_IMAGE,Config.RecipeEntry.KEY_SERVINGS,Config.RecipeEntry.KEY_STEP,Config.RecipeEntry.KEY_INGREDIENT}
+        );
+
+        for ( Recipe recipe : recipeList ) {
+            cursor.newRow()
+                    .add(Config.RecipeEntry.KEY_ID, recipe.getId())
+                    .add(Config.RecipeEntry.KEY_NAME, recipe.getName())
+                    .add(Config.RecipeEntry.KEY_IMAGE, recipe.getImage())
+                    .add(Config.RecipeEntry.KEY_SERVINGS, recipe.getServings())
+                    .add(Config.RecipeEntry.KEY_STEP, arrayListConverter.getStringFromArrayListStep(recipe.getSteps()))
+                    .add(Config.RecipeEntry.KEY_INGREDIENT, arrayListConverter.getStringFromArrayListIngredient(recipe.getIngredients()));
+
+        }
+
+        return cursor;
     }
 
 }

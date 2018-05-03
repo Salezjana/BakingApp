@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -54,7 +55,7 @@ public class RecipeListFragment extends Fragment {
         recipesRecycleView.addOnItemTouchListener(new RecyclerViewItemClickListener(getContext(), recipesRecycleView, new RecyclerViewItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                Toast.makeText(view.getContext(),"click" + position,Toast.LENGTH_SHORT).show();
             }
 
             @Override

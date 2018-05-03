@@ -12,7 +12,7 @@ public class Config {
     public static String BAKING_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
     public static String PREFERENCES_KEY = "bakingapp.PREFERENCES_KEY";
-    public static String PREFERENCES_KEY_DATABASE_STATE = "bakingapp.PREFERENCES_KEY";
+    public static String PREFERENCES_KEY_DATABASE_STATE = "bakingapp.PREFERENCES_KEY.database";
 
     public static final String CONTENT_AUTHORITY = "mrodkiewicz.pl.bakingapp";
 
@@ -30,6 +30,8 @@ public class Config {
         public static String KEY_NAME = "name";
         public static String KEY_IMAGE = "image";
         public static String KEY_SERVINGS = "servings";
+        public static String KEY_STEP = "steps";
+        public static String KEY_INGREDIENT = "ingredients";
     }
 
     public static final class StepEntry implements BaseColumns{
@@ -78,7 +80,7 @@ public class Config {
             ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + "/" + DATABASE_RECIPE;
 
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
-            .appendPath(DATABASE_RECIPE).build();
+            .appendPath(TABLE_RECIPE).build();
 
     public static Uri buildFlavorsUri(long id){
         return ContentUris.withAppendedId(CONTENT_URI, id);

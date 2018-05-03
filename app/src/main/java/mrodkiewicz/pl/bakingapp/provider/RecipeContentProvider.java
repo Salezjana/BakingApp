@@ -1,6 +1,7 @@
 package mrodkiewicz.pl.bakingapp.provider;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -8,12 +9,14 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import mrodkiewicz.pl.bakingapp.db.RecipeDatabaseHelper;
 import mrodkiewicz.pl.bakingapp.helper.Config;
 
-public class RecipeContentProvider extends ContentProvider{
-    private static final UriMatcher sUriMatcher = buildUriMatcher();
+public class RecipeContentProvider extends ContentProvider {
     private static final int RECIPE = 100;
     private static final int RECIPE_BY_ID = 101;
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
+    private static RecipeDatabaseHelper recipeDatabaseHelper;
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -28,18 +31,19 @@ public class RecipeContentProvider extends ContentProvider{
 
     @Override
     public boolean onCreate() {
+        recipeDatabaseHelper = new RecipeDatabaseHelper(getContext());
         return true;
     }
 
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
             case RECIPE: {
+                return (Cursor) recipeDatabaseHelper.getAllRecipe();
             }
             case RECIPE_BY_ID: {
-                return null;
+                return (Cursor) recipeDatabaseHelper.getRecipe((int) ContentUris.parseId(uri));
             }
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -68,24 +72,6 @@ public class RecipeContentProvider extends ContentProvider{
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        Uri returnUri;
-        switch (sUriMatcher.match(uri)) {
-            case RECIPE: {
-//                long _id = db.insert(Config.TABLE_MOVIE, null, values);
-//                if (_id > 0) {
-//                    returnUri = Config.MovieEntry.buildFlavorsUri(_id);
-//                } else {
-//                    throw new android.database.SQLException("Failed to insert row into: " + uri);
-//                }
-                break;
-            }
-
-            default: {
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-
-            }
-        }
-        getContext().getContentResolver().notifyChange(uri, null);
         return null;
     }
 

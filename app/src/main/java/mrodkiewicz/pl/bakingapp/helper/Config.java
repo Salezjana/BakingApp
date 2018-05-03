@@ -14,6 +14,8 @@ public class Config {
     public static String PREFERENCES_KEY = "bakingapp.PREFERENCES_KEY";
     public static String PREFERENCES_KEY_DATABASE_STATE = "bakingapp.PREFERENCES_KEY.database";
 
+    public static String BUNDLE_RECIPELIST = "bakingapp.BUNDLE_RECIPELIST";
+
     public static final String CONTENT_AUTHORITY = "mrodkiewicz.pl.bakingapp";
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);

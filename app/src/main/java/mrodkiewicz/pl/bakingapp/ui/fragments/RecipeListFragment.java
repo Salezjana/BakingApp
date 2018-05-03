@@ -22,7 +22,10 @@ import butterknife.Unbinder;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.adapter.RecipesRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
+import mrodkiewicz.pl.bakingapp.db.models.Step;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
+import mrodkiewicz.pl.bakingapp.ui.MainActivity;
+import timber.log.Timber;
 
 public class RecipeListFragment extends Fragment {
 
@@ -32,6 +35,7 @@ public class RecipeListFragment extends Fragment {
 
     private ArrayList<Recipe> recipeArrayList;
     private RecipesRecycleViewAdapter recipesRecycleViewAdapter;
+    private RecipeDetailFragment recipeDetailFragment;
 
     public RecipeListFragment() {
 
@@ -45,17 +49,23 @@ public class RecipeListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recipeArrayList = new ArrayList<>();
+        if (recipeArrayList == null){
+            recipeArrayList = new ArrayList<>();
+        }
 
         setupView();
         initListeners();
+        recipeDetailFragment = new RecipeDetailFragment();
     }
 
     private void initListeners() {
         recipesRecycleView.addOnItemTouchListener(new RecyclerViewItemClickListener(getContext(), recipesRecycleView, new RecyclerViewItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(view.getContext(),"click" + position,Toast.LENGTH_SHORT).show();
+                MainActivity mainActivity = (MainActivity) getContext();
+                recipeDetailFragment.setStepArrayList((ArrayList<Step>) recipeArrayList.get(position).getSteps());
+                mainActivity.switchFragment(recipeDetailFragment,position
+                );
             }
 
             @Override
@@ -92,9 +102,13 @@ public class RecipeListFragment extends Fragment {
         if (recipeArrayList == null){
             recipeArrayList = new ArrayList<>();
         }
+
+        recipeArrayList.clear();
         recipeArrayList.addAll(recipeList);
         if (recipesRecycleViewAdapter != null){
             recipesRecycleViewAdapter.notifyDataSetChanged();
+        }else{
+            Timber.d("recipesRecycleViewAdapter == null)");
         }
     }
 }

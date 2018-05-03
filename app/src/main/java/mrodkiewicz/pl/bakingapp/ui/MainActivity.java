@@ -6,18 +6,23 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
-import com.google.android.exoplayer2.C;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import mrodkiewicz.pl.bakingapp.BakingApp;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.api.APIService;
@@ -26,6 +31,7 @@ import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.helper.ArrayListConverter;
 import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
+import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeDetailFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,28 +39,39 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class MainActivity extends BaseAppCompatActivity implements
-        android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor> {
+
+
     private static final int TASK_LOADER_ID = 0;
+    @BindView(R.id.fragment_container)
+    FrameLayout fragmentContainer;
     private ArrayList<Recipe> recipeArrayList;
     private RecipeDatabaseHelper recipeDatabaseHelper;
     private SharedPreferences preferences;
     private boolean isDatabaseWithData;
-    private RecipeListFragment firstFragment;
-    private Loader loader;
+    private RecipeListFragment recipeListFragment;
+    private RecipeDetailFragment recipeDetailFragment;
     private ArrayListConverter arrayListConverter;
+    private FragmentManager fragmentManager;
+    private Loader loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         showProgressDialog(null, "loading");
+        ButterKnife.bind(this);
+        recipeListFragment = new RecipeListFragment();
+        recipeDetailFragment = new RecipeDetailFragment();
 
-        firstFragment = new RecipeListFragment();
         recipeArrayList = new ArrayList<Recipe>();
         preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
         recipeDatabaseHelper = new RecipeDatabaseHelper(this);
         SQLiteDatabase db = recipeDatabaseHelper.getWritableDatabase();
         arrayListConverter = new ArrayListConverter();
+
+        fragmentManager = getSupportFragmentManager();
+
 
         isDatabaseWithData = preferences.getBoolean(Config.PREFERENCES_KEY_DATABASE_STATE, false);
 
@@ -68,8 +85,7 @@ public class MainActivity extends BaseAppCompatActivity implements
             if (savedInstanceState != null) {
                 return;
             }
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, firstFragment).commit();
+            switchFragment(recipeListFragment,-1);
         }
 
     }
@@ -77,13 +93,6 @@ public class MainActivity extends BaseAppCompatActivity implements
     private void loadRecipes() {
         Timber.d("loadRecipes isOnline " + isInternetEnable());
         if (isDatabaseWithData) {
-//                ArrayList<Recipe> recipesTMP = (ArrayList<Recipe>) recipeDatabaseHelper.getAllRecipe();
-//                if (recipesTMP != null){
-//                    Timber.d("recipesTMP != null");
-//                    recipeArrayList.addAll(recipeDatabaseHelper.getAllRecipe());
-//                }
-//                hideProgressDialog();
-//                firstFragment.setRecipeList(recipeArrayList);
             loader = getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, this);
         } else {
             if (isInternetEnable()) {
@@ -95,6 +104,7 @@ public class MainActivity extends BaseAppCompatActivity implements
                     @Override
                     public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                         Timber.d("onResponse");
+                        recipeArrayList.clear();
                         recipeArrayList.addAll(response.body());
                         listToDatabse(recipeArrayList);
                         Timber.d("beka z typa " + recipeArrayList.size());
@@ -120,7 +130,7 @@ public class MainActivity extends BaseAppCompatActivity implements
             recipeDatabaseHelper.addRecipe(recipe);
         }
         preferences.edit().putBoolean(Config.PREFERENCES_KEY_DATABASE_STATE, true).apply();
-        firstFragment.setRecipeList(recipeArrayList);
+        recipeListFragment.setRecipeList(recipeArrayList);
         hideProgressDialog();
     }
 
@@ -134,6 +144,22 @@ public class MainActivity extends BaseAppCompatActivity implements
                     public void onClick(View v) {
                     }
                 }).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        Timber.d(fragment.getClass().toString());
+        if (fragment.getClass() == RecipeListFragment.class) {
+            Timber.d("onBackPressed RecipeListFragment");
+            super.onBackPressed();
+        }else if (fragment.getClass() == RecipeDetailFragment.class){
+            switchFragment(recipeListFragment,-1);
+            Timber.d("onBackPressed RecipeDetailFragment");
+        }else{
+            Timber.d("onBackPressed else");
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -194,7 +220,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         Timber.d("onLoadFinished");
         if (data == null) {
             Timber.d(" Cursor data = null");
-        }else{
+        } else {
             cursorToList(data);
         }
         Timber.d("CONTENT_URI " + Config.CONTENT_URI);
@@ -214,6 +240,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         Timber.d("onLoaderReset");
         hideProgressDialog();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
@@ -224,7 +251,12 @@ public class MainActivity extends BaseAppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                Toast.makeText(getApplicationContext(),"REFRESH ZIOM",Toast.LENGTH_SHORT).show();
+                isDatabaseWithData = false;
+                recipeArrayList.clear();
+                recipeDatabaseHelper.deleteAllData();
+                showProgressDialog(null, "loading");
+                loadRecipes();
+                setupView(null);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -249,7 +281,18 @@ public class MainActivity extends BaseAppCompatActivity implements
                 cursor.moveToNext();
             }
         }
-        firstFragment.setRecipeList(recipesTMP);
+        recipeArrayList.clear();
+        recipeArrayList.addAll(recipesTMP);
+        recipeListFragment.setRecipeList(recipesTMP);
+    }
+    public void switchFragment(Fragment fragment, int id) {
+        if (id == -1){
+            setTitle(getString(R.string.app_name));
+            fragmentManager.beginTransaction().replace(R.id.fragment_container,fragment).commit();
+        }else{
+            setTitle(recipeArrayList.get(id).getName());
+            fragmentManager.beginTransaction().replace(R.id.fragment_container,fragment).commit();
+        }
     }
 
 }

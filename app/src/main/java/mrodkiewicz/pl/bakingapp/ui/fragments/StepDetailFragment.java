@@ -11,30 +11,34 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import mrodkiewicz.pl.bakingapp.R;
+import mrodkiewicz.pl.bakingapp.adapter.RecipesRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.adapter.StepsRecycleViewAdapter;
+import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
+import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 
-public class RecipeDetailFragment extends Fragment {
-
-
-    @BindView(R.id.step_recycleviewlist)
-    RecyclerView stepRecycleviewlist;
+public class StepDetailFragment extends Fragment {
     @BindView(R.id.fab)
     FloatingActionButton fab;
     Unbinder unbinder;
-    private ArrayList<Step> stepArrayList;
-    private StepsRecycleViewAdapter stepsRecycleViewAdapter;
+    @BindView(R.id.step_recycleviewlist)
+    RecyclerView stepRecycleviewlist;
 
-    public RecipeDetailFragment() {
+    private ArrayList<Step> stepArrayList;
+    private StepsRecycleViewAdapter  stepsRecycleViewAdapter;
+
+    public StepDetailFragment() {
     }
 
 
@@ -54,8 +58,13 @@ public class RecipeDetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        fab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "onClick", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-        if (stepArrayList == null) {
+        if (stepArrayList == null){
             stepArrayList = new ArrayList<Step>();
         }
 
@@ -71,7 +80,7 @@ public class RecipeDetailFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 MainActivity mainActivity = (MainActivity) getContext();
-                mainActivity.switchFragment(new StepDetailFragment(), -1);
+                mainActivity.switchFragment(new RecipeDetailFragment(),-1);
             }
 
             @Override

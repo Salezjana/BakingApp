@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -33,6 +34,7 @@ import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeDetailFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
+import mrodkiewicz.pl.bakingapp.ui.fragments.StepDetailFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,7 +74,6 @@ public class MainActivity extends BaseAppCompatActivity implements
 
         fragmentManager = getSupportFragmentManager();
 
-
         isDatabaseWithData = preferences.getBoolean(Config.PREFERENCES_KEY_DATABASE_STATE, false);
 
         loadRecipes();
@@ -85,6 +86,7 @@ public class MainActivity extends BaseAppCompatActivity implements
             if (savedInstanceState != null) {
                 return;
             }
+            Timber.d("setupView ");
             switchFragment(recipeListFragment,-1);
         }
 
@@ -156,7 +158,11 @@ public class MainActivity extends BaseAppCompatActivity implements
         }else if (fragment.getClass() == RecipeDetailFragment.class){
             switchFragment(recipeListFragment,-1);
             Timber.d("onBackPressed RecipeDetailFragment");
-        }else{
+        }else if (fragment.getClass() == StepDetailFragment.class){
+            switchFragment(recipeDetailFragment,-1);
+            Timber.d("onBackPressed StepDetailFragment");
+        }
+        else{
             Timber.d("onBackPressed else");
             super.onBackPressed();
         }
@@ -286,13 +292,17 @@ public class MainActivity extends BaseAppCompatActivity implements
         recipeListFragment.setRecipeList(recipesTMP);
     }
     public void switchFragment(Fragment fragment, int id) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.animator.slide_in_right,R.animator.slide_in_left);
         if (id == -1){
             setTitle(getString(R.string.app_name));
-            fragmentManager.beginTransaction().replace(R.id.fragment_container,fragment).commit();
+            fragmentTransaction.replace(R.id.fragment_container,fragment);
         }else{
             setTitle(recipeArrayList.get(id).getName());
-            fragmentManager.beginTransaction().replace(R.id.fragment_container,fragment).commit();
+            fragmentTransaction
+                    .replace(R.id.fragment_container,fragment);
         }
+        fragmentTransaction.commit();
     }
 
 }

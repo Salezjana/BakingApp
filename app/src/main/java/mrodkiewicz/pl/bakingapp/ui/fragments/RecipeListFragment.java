@@ -63,7 +63,6 @@ public class RecipeListFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 MainActivity mainActivity = (MainActivity) getContext();
-                recipeDetailFragment.setStepArrayList((ArrayList<Step>) recipeArrayList.get(position).getSteps());
                 mainActivity.switchFragment(recipeDetailFragment,position
                 );
             }

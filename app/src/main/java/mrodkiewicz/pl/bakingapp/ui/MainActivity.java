@@ -22,6 +22,8 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mrodkiewicz.pl.bakingapp.BakingApp;
@@ -87,7 +89,6 @@ public class MainActivity extends BaseAppCompatActivity implements
                 return;
             }
             Timber.d("setupView ");
-            switchFragment(recipeListFragment, -1);
         }
 
     }
@@ -132,7 +133,7 @@ public class MainActivity extends BaseAppCompatActivity implements
             recipeDatabaseHelper.addRecipe(recipe);
         }
         preferences.edit().putBoolean(Config.PREFERENCES_KEY_DATABASE_STATE, true).apply();
-        recipeListFragment.setRecipeList(recipeArrayList);
+        startFirstFragment();
         hideProgressDialog();
     }
 
@@ -296,22 +297,30 @@ public class MainActivity extends BaseAppCompatActivity implements
         }
         recipeArrayList.clear();
         recipeArrayList.addAll(recipesTMP);
-        recipeListFragment.setRecipeList(recipesTMP);
+        startFirstFragment();
     }
 
-    public void switchFragment(Fragment fragment, int id) {
+    public void switchFragment(Fragment fragment,@Nullable Bundle bundleARGS) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_in_left);
-        if (id == -1) {
+        Bundle bundle= new Bundle();
+        bundle.putParcelableArrayList(Config.BUNDLE_RECIPELIST,recipeArrayList);
+        if (bundleARGS == null) {
             setTitle(getString(R.string.app_name));
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
         } else {
-            setTitle(recipeArrayList.get(id).getName());
-            fragmentTransaction
-                    .replace(R.id.fragment_container, fragment);
+            bundle.putInt(Config.BUNDLE_KEY_POSITION,bundleARGS.getInt(Config.BUNDLE_KEY_POSITION));
+            bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP,bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP));
+            setTitle(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
         }
+        fragment.setArguments(bundle);
+        fragmentTransaction
+                .replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
+    }
+
+    private void startFirstFragment(){
+        switchFragment(recipeListFragment, null);
     }
 
 

@@ -21,6 +21,7 @@ import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.adapter.RecipesRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
+import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 import timber.log.Timber;
@@ -35,6 +36,7 @@ public class RecipeListFragment extends Fragment {
     private RecipesRecycleViewAdapter recipesRecycleViewAdapter;
     private RecipeDetailFragment recipeDetailFragment;
 
+
     public RecipeListFragment() {
 
     }
@@ -42,6 +44,12 @@ public class RecipeListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (recipeArrayList == null) {
+            recipeArrayList = new ArrayList<Recipe>();
+        }
+        if (getArguments() != null){
+            recipeArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST));
+        }
     }
 
     @Override
@@ -61,8 +69,9 @@ public class RecipeListFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 MainActivity mainActivity = (MainActivity) getContext();
-                recipeDetailFragment.setStepArrayList((ArrayList<Step>) recipeArrayList.get(position).getSteps());
-                mainActivity.switchFragment(recipeDetailFragment, position);
+                Bundle bundle= new Bundle();
+                bundle.putInt(Config.BUNDLE_KEY_POSITION,position);
+                mainActivity.switchFragment(recipeDetailFragment, bundle);
             }
 
             @Override
@@ -95,17 +104,4 @@ public class RecipeListFragment extends Fragment {
         unbinder.unbind();
     }
 
-    public void setRecipeList(ArrayList<Recipe> recipeList) {
-        if (recipeArrayList == null) {
-            recipeArrayList = new ArrayList<>();
-        }
-
-        recipeArrayList.clear();
-        recipeArrayList.addAll(recipeList);
-        if (recipesRecycleViewAdapter != null) {
-            recipesRecycleViewAdapter.notifyDataSetChanged();
-        } else {
-            Timber.d("recipesRecycleViewAdapter == null)");
-        }
-    }
 }

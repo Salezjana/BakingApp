@@ -24,6 +24,7 @@ import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.adapter.StepsRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
+import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 
@@ -35,6 +36,7 @@ public class RecipeDetailFragment extends Fragment {
     private ArrayList<Step> stepArrayList;
     private ArrayList<Recipe> recipeArrayList;
     private StepsRecycleViewAdapter stepsRecycleViewAdapter;
+    private int positon;
 
     public RecipeDetailFragment() {
     }
@@ -43,6 +45,15 @@ public class RecipeDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (recipeArrayList == null) {
+            recipeArrayList = new ArrayList<Recipe>();
+            stepArrayList = new ArrayList<Step>();
+        }
+        if (getArguments() != null){
+            recipeArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST));
+            positon = getArguments().getInt(Config.BUNDLE_KEY_POSITION);
+            stepArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST).get(positon).getSteps());
+        }
         setHasOptionsMenu(true);
 
     }
@@ -75,9 +86,6 @@ public class RecipeDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (stepArrayList == null) {
-            stepArrayList = new ArrayList<Step>();
-        }
 
         setupView();
         initListeners();
@@ -90,7 +98,7 @@ public class RecipeDetailFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 MainActivity mainActivity = (MainActivity) getContext();
-                mainActivity.switchFragment(new StepDetailFragment(), 1);
+                mainActivity.switchFragment(new StepDetailFragment(), null);
             }
 
             @Override
@@ -114,13 +122,5 @@ public class RecipeDetailFragment extends Fragment {
         unbinder.unbind();
     }
 
-    public void setStepArrayList(ArrayList<Step> stepArrayList) {
-        this.stepArrayList = stepArrayList;
-    }
-
-    public void setRecipeArrayList(ArrayList<Recipe> recipeArrayList, int position) {
-        this.recipeArrayList = recipeArrayList;
-        setStepArrayList((ArrayList<Step>) recipeArrayList.get(position).getSteps());
-    }
 
 }

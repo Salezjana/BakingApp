@@ -20,16 +20,17 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.adapter.StepsRecycleViewAdapter;
+import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
+import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 
 public class StepDetailFragment extends Fragment {
-    Unbinder unbinder;
-    @BindView(R.id.step_recycleviewlist)
-    RecyclerView stepRecycleviewlist;
     private ArrayList<Step> stepArrayList;
     private StepsRecycleViewAdapter stepsRecycleViewAdapter;
+    private int positonStep;
+
 
     public StepDetailFragment() {
     }
@@ -38,14 +39,20 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (stepArrayList == null) {
+            stepArrayList = new ArrayList<Step>();
+        }
+        if (getArguments() != null){
+            stepArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST).get(getArguments().getInt(Config.BUNDLE_KEY_POSITION)).getSteps());
+            positonStep = getArguments().getInt(Config.BUNDLE_KEY_POSITION_STEP);
+        }
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        View view = inflater.inflate(R.layout.fragment_step_detail_fragmnet, container, false);
         return view;
     }
 
@@ -53,51 +60,11 @@ public class StepDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (stepArrayList == null) {
-            stepArrayList = new ArrayList<Step>();
-        }
-
-        setupView();
-        initListeners();
 
 
     }
 
 
-
-
-    private void initListeners() {
-        stepRecycleviewlist.addOnItemTouchListener(new RecyclerViewItemClickListener(getContext(), stepRecycleviewlist, new RecyclerViewItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                MainActivity mainActivity = (MainActivity) getContext();
-                mainActivity.switchFragment(new RecipeDetailFragment(), -1);
-            }
-
-            @Override
-            public void onItemLongClick(View view, int position) {
-
-            }
-        }));
-    }
-
-    private void setupView() {
-        stepsRecycleViewAdapter = new StepsRecycleViewAdapter(getContext(), stepArrayList);
-        stepRecycleviewlist.setAdapter(stepsRecycleViewAdapter);
-        stepRecycleviewlist.setLayoutManager(new LinearLayoutManager(getContext()));
-        stepRecycleviewlist.setItemAnimator(new DefaultItemAnimator());
-        stepsRecycleViewAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
-    public void setStepArrayList(ArrayList<Step> stepArrayList) {
-        this.stepArrayList = stepArrayList;
-    }
 
 
 }

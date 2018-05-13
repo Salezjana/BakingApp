@@ -26,7 +26,7 @@ public class BakingApp extends Application {
         super.onCreate();
 
 
-        if (BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             Timber.plant(new Timber.DebugTree());
@@ -38,13 +38,12 @@ public class BakingApp extends Application {
                     .addNetworkInterceptor(new StethoInterceptor())
                     .build();
             Timber.d("TERA JEST DEBUG ZIOM");
-        }else{
+        } else {
             okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                     .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                     .build();
         }
-
 
 
     }

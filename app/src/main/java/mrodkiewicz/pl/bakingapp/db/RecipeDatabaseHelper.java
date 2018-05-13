@@ -99,7 +99,7 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
                         stepTMP.setShortDescription(cursorStep.getString(2));
                         stepTMP.setDescription(cursorStep.getString(3));
                         stepTMP.setVideoURL(cursorStep.getString(4));
-                        if (cursorStep.getString(5) != null){
+                        if (cursorStep.getString(5) != null) {
                             stepTMP.setThumbnailURL(cursorStep.getString(5));
                         }
                         listSteps.add(stepTMP);

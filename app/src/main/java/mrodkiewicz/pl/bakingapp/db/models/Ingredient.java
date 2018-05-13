@@ -13,7 +13,8 @@ public class Ingredient implements Parcelable {
     @SerializedName("ingredient")
     private String ingredient;
 
-    public Ingredient(){}
+    public Ingredient() {
+    }
 
     public Double getQuantity() {
         return quantity;
@@ -38,7 +39,6 @@ public class Ingredient implements Parcelable {
     public void setIngredient(String ingredient) {
         this.ingredient = ingredient;
     }
-
 
 
     protected Ingredient(Parcel in) {

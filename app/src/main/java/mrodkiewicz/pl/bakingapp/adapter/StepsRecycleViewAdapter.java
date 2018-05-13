@@ -11,11 +11,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import mrodkiewicz.pl.bakingapp.R;
-import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
 import timber.log.Timber;
 
-public class StepsRecycleViewAdapter extends RecyclerView.Adapter<StepsRecycleViewAdapter.ViewHolder>{
+public class StepsRecycleViewAdapter extends RecyclerView.Adapter<StepsRecycleViewAdapter.ViewHolder> {
     private ArrayList<Step> steps;
     private Context context;
 
@@ -45,7 +44,7 @@ public class StepsRecycleViewAdapter extends RecyclerView.Adapter<StepsRecycleVi
         return steps.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
 
         public ViewHolder(View itemView) {

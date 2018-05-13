@@ -24,6 +24,7 @@ public class RecipeContentProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private static RecipeDatabaseHelper recipeDatabaseHelper;
     private ArrayListConverter arrayListConverter;
+
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = Config.CONTENT_AUTHORITY;
@@ -93,12 +94,13 @@ public class RecipeContentProvider extends ContentProvider {
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         return 0;
     }
+
     public Cursor getCursorFromList(List<Recipe> recipeList) {
         MatrixCursor cursor = new MatrixCursor(
-                new String[] {Config.RecipeEntry.KEY_ID, Config.RecipeEntry.KEY_NAME,Config.RecipeEntry.KEY_IMAGE,Config.RecipeEntry.KEY_SERVINGS,Config.RecipeEntry.KEY_STEP,Config.RecipeEntry.KEY_INGREDIENT}
+                new String[]{Config.RecipeEntry.KEY_ID, Config.RecipeEntry.KEY_NAME, Config.RecipeEntry.KEY_IMAGE, Config.RecipeEntry.KEY_SERVINGS, Config.RecipeEntry.KEY_STEP, Config.RecipeEntry.KEY_INGREDIENT}
         );
 
-        for ( Recipe recipe : recipeList ) {
+        for (Recipe recipe : recipeList) {
             cursor.newRow()
                     .add(Config.RecipeEntry.KEY_ID, recipe.getId())
                     .add(Config.RecipeEntry.KEY_NAME, recipe.getName())

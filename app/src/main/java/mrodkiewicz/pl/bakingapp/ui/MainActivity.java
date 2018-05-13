@@ -245,11 +245,13 @@ public class MainActivity extends BaseAppCompatActivity implements
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
         return true;
     }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.action_refresh).setVisible(true);
         return super.onPrepareOptionsMenu(menu);
     }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {

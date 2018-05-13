@@ -1,7 +1,6 @@
 package mrodkiewicz.pl.bakingapp.db.models;
 
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,7 +19,8 @@ public class Step implements Parcelable {
     @SerializedName("thumbnailURL")
     private String thumbnailURL;
 
-    public Step(){}
+    public Step() {
+    }
 
     public Integer getId() {
         return id;

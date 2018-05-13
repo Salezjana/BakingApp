@@ -13,13 +13,13 @@ import java.util.ArrayList;
 
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
-import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
 import timber.log.Timber;
 
 
-public class RecipesRecycleViewAdapter extends RecyclerView.Adapter<RecipesRecycleViewAdapter.ViewHolder>{
+public class RecipesRecycleViewAdapter extends RecyclerView.Adapter<RecipesRecycleViewAdapter.ViewHolder> {
     private ArrayList<Recipe> recipeArrayList;
     private Context context;
+
     public RecipesRecycleViewAdapter(Context context, ArrayList<Recipe> recipeArrayList) {
         Timber.d("RecipesRecycleViewAdapter");
 
@@ -46,7 +46,7 @@ public class RecipesRecycleViewAdapter extends RecyclerView.Adapter<RecipesRecyc
         return recipeArrayList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
 
         public ViewHolder(View itemView) {

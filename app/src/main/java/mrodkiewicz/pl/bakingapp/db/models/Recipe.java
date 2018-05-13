@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class Recipe implements Parcelable {
     @SerializedName("id")
     private Integer id;
@@ -30,7 +29,8 @@ public class Recipe implements Parcelable {
     @SerializedName("image")
     private String image;
 
-    public Recipe(){}
+    public Recipe() {
+    }
 
     public Integer getId() {
         return id;

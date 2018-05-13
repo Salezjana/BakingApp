@@ -1,11 +1,7 @@
 package mrodkiewicz.pl.bakingapp.ui.fragments;
 
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -26,7 +21,6 @@ import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.adapter.RecipesRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
-import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 import timber.log.Timber;
@@ -40,6 +34,7 @@ public class RecipeListFragment extends Fragment {
     private ArrayList<Recipe> recipeArrayList;
     private RecipesRecycleViewAdapter recipesRecycleViewAdapter;
     private RecipeDetailFragment recipeDetailFragment;
+
     public RecipeListFragment() {
 
     }
@@ -52,7 +47,7 @@ public class RecipeListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (recipeArrayList == null){
+        if (recipeArrayList == null) {
             recipeArrayList = new ArrayList<>();
         }
 
@@ -67,7 +62,7 @@ public class RecipeListFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 MainActivity mainActivity = (MainActivity) getContext();
                 recipeDetailFragment.setStepArrayList((ArrayList<Step>) recipeArrayList.get(position).getSteps());
-                mainActivity.switchFragment(recipeDetailFragment,position);
+                mainActivity.switchFragment(recipeDetailFragment, position);
             }
 
             @Override
@@ -100,16 +95,16 @@ public class RecipeListFragment extends Fragment {
         unbinder.unbind();
     }
 
-    public void setRecipeList(ArrayList<Recipe> recipeList){
-        if (recipeArrayList == null){
+    public void setRecipeList(ArrayList<Recipe> recipeList) {
+        if (recipeArrayList == null) {
             recipeArrayList = new ArrayList<>();
         }
 
         recipeArrayList.clear();
         recipeArrayList.addAll(recipeList);
-        if (recipesRecycleViewAdapter != null){
+        if (recipesRecycleViewAdapter != null) {
             recipesRecycleViewAdapter.notifyDataSetChanged();
-        }else{
+        } else {
             Timber.d("recipesRecycleViewAdapter == null)");
         }
     }

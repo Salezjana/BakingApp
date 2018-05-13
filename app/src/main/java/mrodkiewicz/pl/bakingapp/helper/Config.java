@@ -5,9 +5,6 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import static mrodkiewicz.pl.bakingapp.helper.Config.RecipeEntry.KEY_ID;
-import static mrodkiewicz.pl.bakingapp.helper.Config.RecipeEntry.KEY_NAME;
-
 public class Config {
     public static String BAKING_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
@@ -29,7 +26,7 @@ public class Config {
     public static final String TABLE_INGREDIENT = "ingredients";
 
 
-    public static final class RecipeEntry implements BaseColumns{
+    public static final class RecipeEntry implements BaseColumns {
         public static String KEY_ID = "_ID";
         public static String KEY_NAME = "name";
         public static String KEY_IMAGE = "image";
@@ -38,7 +35,7 @@ public class Config {
         public static String KEY_INGREDIENT = "ingredients";
     }
 
-    public static final class StepEntry implements BaseColumns{
+    public static final class StepEntry implements BaseColumns {
         public static String KEY_ID = "_ID";
         public static String KEY_FROM_RECIPE_WITH_ID = "fromRecipeWithID";
         public static String KEY_SHORT_DESCRIPTION = "shortDescription";
@@ -47,7 +44,7 @@ public class Config {
         public static String KEY_THUMBNAUL_URL = "thumbnailURL";
     }
 
-    public static final class IngredientEntry implements BaseColumns{
+    public static final class IngredientEntry implements BaseColumns {
         public static String KEY_FROM_RECIPE_WITH_ID = "fromRecipeWithID";
         public static String KEY_QUANTITY = "quantity";
         public static String KEY_MEASURE = "measure";
@@ -81,12 +78,12 @@ public class Config {
             ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + DATABASE_RECIPE;
 
     public static final String CONTENT_ITEM_TYPE =
-            ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + "/" + DATABASE_RECIPE;
+            ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + DATABASE_RECIPE;
 
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
             .appendPath(TABLE_RECIPE).build();
 
-    public static Uri buildFlavorsUri(long id){
+    public static Uri buildFlavorsUri(long id) {
         return ContentUris.withAppendedId(CONTENT_URI, id);
     }
 }

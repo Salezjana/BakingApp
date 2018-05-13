@@ -1,20 +1,19 @@
 package mrodkiewicz.pl.bakingapp.ui.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.google.android.exoplayer2.C;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -25,7 +24,6 @@ import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.adapter.StepsRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
-import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 
@@ -45,6 +43,8 @@ public class RecipeDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -53,6 +53,22 @@ public class RecipeDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_fragmnet__recipe_detail, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_show_ingredient:
+                Toast.makeText(getActivity(), "Calls Icon Click", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

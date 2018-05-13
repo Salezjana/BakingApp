@@ -29,12 +29,9 @@ import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 
 public class StepDetailFragment extends Fragment {
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
     Unbinder unbinder;
     @BindView(R.id.step_recycleviewlist)
     RecyclerView stepRecycleviewlist;
-
     private ArrayList<Step> stepArrayList;
     private StepsRecycleViewAdapter  stepsRecycleViewAdapter;
 
@@ -58,11 +55,6 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(v.getContext(), "onClick", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         if (stepArrayList == null){
             stepArrayList = new ArrayList<Step>();

@@ -1,5 +1,7 @@
 package mrodkiewicz.pl.bakingapp.ui.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.exoplayer2.C;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -19,19 +23,19 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.adapter.StepsRecycleViewAdapter;
+import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
+import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 
 public class RecipeDetailFragment extends Fragment {
 
-
     @BindView(R.id.step_recycleviewlist)
     RecyclerView stepRecycleviewlist;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
     Unbinder unbinder;
     private ArrayList<Step> stepArrayList;
+    private ArrayList<Recipe> recipeArrayList;
     private StepsRecycleViewAdapter stepsRecycleViewAdapter;
 
     public RecipeDetailFragment() {
@@ -62,7 +66,6 @@ public class RecipeDetailFragment extends Fragment {
         setupView();
         initListeners();
 
-
     }
 
 
@@ -71,7 +74,7 @@ public class RecipeDetailFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 MainActivity mainActivity = (MainActivity) getContext();
-                mainActivity.switchFragment(new StepDetailFragment(), -1);
+                mainActivity.switchFragment(new StepDetailFragment(), 1);
             }
 
             @Override
@@ -99,5 +102,9 @@ public class RecipeDetailFragment extends Fragment {
         this.stepArrayList = stepArrayList;
     }
 
+    public void setRecipeArrayList(ArrayList<Recipe> recipeArrayList, int position) {
+        this.recipeArrayList = recipeArrayList;
+        setStepArrayList((ArrayList<Step>) recipeArrayList.get(position).getSteps());
+    }
 
 }

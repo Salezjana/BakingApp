@@ -12,15 +12,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +34,6 @@ import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeDetailFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
-import mrodkiewicz.pl.bakingapp.ui.fragments.StepDetailFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -56,6 +55,7 @@ public class MainActivity extends BaseAppCompatActivity implements
     private ArrayListConverter arrayListConverter;
     private FragmentManager fragmentManager;
     private Loader loader;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         fragmentManager = getSupportFragmentManager();
 
         isDatabaseWithData = preferences.getBoolean(Config.PREFERENCES_KEY_DATABASE_STATE, false);
-
+        invalidateOptionsMenu();
         loadRecipes();
         setupView(savedInstanceState);
 
@@ -87,7 +87,7 @@ public class MainActivity extends BaseAppCompatActivity implements
                 return;
             }
             Timber.d("setupView ");
-            switchFragment(recipeListFragment,-1);
+            switchFragment(recipeListFragment, -1);
         }
 
     }
@@ -151,20 +151,12 @@ public class MainActivity extends BaseAppCompatActivity implements
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        Timber.d(fragment.getClass().toString());
         if (fragment.getClass() == RecipeListFragment.class) {
-            Timber.d("onBackPressed RecipeListFragment");
+            Timber.d("fragment.getClass() == RecipeListFragment.class ");
             super.onBackPressed();
-        }else if (fragment.getClass() == RecipeDetailFragment.class){
-            switchFragment(recipeListFragment,-1);
-            Timber.d("onBackPressed RecipeDetailFragment");
-        }else if (fragment.getClass() == StepDetailFragment.class){
-            switchFragment(recipeDetailFragment,-1);
-            Timber.d("onBackPressed StepDetailFragment");
-        }
-        else{
-            Timber.d("onBackPressed else");
-            super.onBackPressed();
+        } else {
+            Timber.d("onBackPressed fragmentManager.popBackStackImmediate()");
+            fragmentManager.popBackStackImmediate();
         }
     }
 
@@ -249,8 +241,21 @@ public class MainActivity extends BaseAppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
         return true;
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_refresh).setVisible(true);
+        return super.onPrepareOptionsMenu(menu);
+    }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_activity_main, menu);
     }
 
     @Override
@@ -291,18 +296,21 @@ public class MainActivity extends BaseAppCompatActivity implements
         recipeArrayList.addAll(recipesTMP);
         recipeListFragment.setRecipeList(recipesTMP);
     }
+
     public void switchFragment(Fragment fragment, int id) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.animator.slide_in_right,R.animator.slide_in_left);
-        if (id == -1){
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_in_left);
+        if (id == -1) {
             setTitle(getString(R.string.app_name));
-            fragmentTransaction.replace(R.id.fragment_container,fragment);
-        }else{
+            fragmentTransaction.replace(R.id.fragment_container, fragment);
+        } else {
             setTitle(recipeArrayList.get(id).getName());
             fragmentTransaction
-                    .replace(R.id.fragment_container,fragment);
+                    .replace(R.id.fragment_container, fragment);
         }
         fragmentTransaction.commit();
     }
+
 
 }

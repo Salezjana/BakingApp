@@ -79,6 +79,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         isDatabaseWithData = preferences.getBoolean(Config.PREFERENCES_KEY_DATABASE_STATE, false);
         invalidateOptionsMenu();
         loadRecipes();
+
         setupView(savedInstanceState);
 
     }
@@ -154,6 +155,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment.getClass() == RecipeListFragment.class) {
             Timber.d("fragment.getClass() == RecipeListFragment.class ");
+            finish();
             super.onBackPressed();
         } else {
             Timber.d("onBackPressed fragmentManager.popBackStackImmediate()");

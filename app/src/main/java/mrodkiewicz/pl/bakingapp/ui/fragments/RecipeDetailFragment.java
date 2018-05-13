@@ -27,6 +27,7 @@ import mrodkiewicz.pl.bakingapp.db.models.Step;
 import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
+import timber.log.Timber;
 
 public class RecipeDetailFragment extends Fragment {
 
@@ -86,7 +87,6 @@ public class RecipeDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         setupView();
         initListeners();
 
@@ -97,8 +97,11 @@ public class RecipeDetailFragment extends Fragment {
         stepRecycleviewlist.addOnItemTouchListener(new RecyclerViewItemClickListener(getContext(), stepRecycleviewlist, new RecyclerViewItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                Timber.d("RecipeDetailFragment onItemClick " + position);
                 MainActivity mainActivity = (MainActivity) getContext();
-                mainActivity.switchFragment(new StepDetailFragment(), null);
+                Bundle bundle = new Bundle();
+                bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, position);
+                mainActivity.switchFragment(new StepDetailFragment(), bundle);
             }
 
             @Override

@@ -68,6 +68,7 @@ public class RecipeListFragment extends Fragment {
         recipesRecycleView.addOnItemTouchListener(new RecyclerViewItemClickListener(getContext(), recipesRecycleView, new RecyclerViewItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                Timber.d("RecipeListFragment onItemClick " + position);
                 MainActivity mainActivity = (MainActivity) getContext();
                 Bundle bundle= new Bundle();
                 bundle.putInt(Config.BUNDLE_KEY_POSITION,position);

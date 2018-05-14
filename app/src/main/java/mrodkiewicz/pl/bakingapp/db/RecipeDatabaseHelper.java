@@ -106,6 +106,19 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
                     } while (cursorStep.moveToNext());
                 }
                 recipeTMP.setSteps(listSteps);
+                String selectQueryIngredient = "SELECT  * FROM " + Config.TABLE_INGREDIENT + " WHERE " + Config.IngredientEntry.KEY_FROM_RECIPE_WITH_ID + "=" + recipeTMP.getId();
+                Cursor cursorIngredient = db.rawQuery(selectQueryIngredient, null);
+                ArrayList<Ingredient> listIngredient = new ArrayList<Ingredient>();
+                if (cursorIngredient.moveToFirst()) {
+                    do {
+                        Ingredient ingredientTMP = new Ingredient();
+                        ingredientTMP.setIngredient(cursorIngredient.getString(3));
+                        ingredientTMP.setMeasure(cursorIngredient.getString(2));
+                        ingredientTMP.setQuantity(cursorIngredient.getDouble(1));
+                        listIngredient.add(ingredientTMP);
+                    } while (cursorIngredient.moveToNext());
+                }
+                recipeTMP.setIngredients(listIngredient);
                 list.add(recipeTMP);
             } while (cursor.moveToNext());
         }

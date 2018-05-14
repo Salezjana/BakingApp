@@ -11,47 +11,51 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
 import mrodkiewicz.pl.bakingapp.R;
+import mrodkiewicz.pl.bakingapp.db.models.Ingredient;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import timber.log.Timber;
 
 
 public class IngredientsRecycleViewAdapter extends RecyclerView.Adapter<IngredientsRecycleViewAdapter.ViewHolder> {
-    private ArrayList<Recipe> recipeArrayList;
+    private ArrayList<Ingredient> ingredientArrayList;
     private Context context;
 
-    public IngredientsRecycleViewAdapter(Context context, ArrayList<Recipe> recipeArrayList) {
-        Timber.d("RecipesRecycleViewAdapter");
+    public IngredientsRecycleViewAdapter(Context context, ArrayList<Ingredient> ingredientArrayList) {
+        Timber.d("IngredientsRecycleViewAdapter");
 
         this.context = context;
-        this.recipeArrayList = recipeArrayList;
+        this.ingredientArrayList = ingredientArrayList;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_item_recipe, parent, false);
+                .inflate(R.layout.row_item_ingredient, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.textView.setText(recipeArrayList.get(position).getName());
-
+        holder.textViewMain.setText(ingredientArrayList.get(position).getIngredient());
+        holder.textViewSmall.setText(String.valueOf(ingredientArrayList.get(position).getQuantity())+ " " + String.valueOf(ingredientArrayList.get(position).getMeasure()));
     }
 
     @Override
     public int getItemCount() {
-        return recipeArrayList.size();
+        return ingredientArrayList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
+        TextView textViewMain,textViewSmall;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.textView_row_recipe);
+            textViewMain = (TextView) itemView.findViewById(R.id.main_tv_ingredient);
+            textViewSmall = (TextView) itemView.findViewById(R.id.small_tv_ingredient);
 
         }
 

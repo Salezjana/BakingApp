@@ -34,6 +34,7 @@ import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.helper.ArrayListConverter;
 import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
+import mrodkiewicz.pl.bakingapp.ui.fragments.IngredientListFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeDetailFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
 import retrofit2.Call;

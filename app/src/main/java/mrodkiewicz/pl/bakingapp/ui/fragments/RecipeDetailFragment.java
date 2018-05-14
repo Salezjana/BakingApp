@@ -76,7 +76,10 @@ public class RecipeDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_show_ingredient:
-                Toast.makeText(getActivity(), "Calls Icon Click", Toast.LENGTH_SHORT).show();
+                MainActivity mainActivity = (MainActivity) getContext();
+                Bundle bundle = new Bundle();
+                bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, positon);
+                mainActivity.switchFragment(new IngredientListFragment(), bundle);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

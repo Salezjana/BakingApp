@@ -42,7 +42,7 @@ public class StepDetailFragment extends Fragment {
     Unbinder unbinder;
     private ArrayList<Step> stepArrayList;
     private StepsRecycleViewAdapter stepsRecycleViewAdapter;
-    private int positonStep,position;
+    private int positonStep, position;
     private ExoPlayer player;
 
     public StepDetailFragment() {
@@ -73,10 +73,10 @@ public class StepDetailFragment extends Fragment {
                 new DefaultRenderersFactory(getActivity()),
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
-        if (stepArrayList.get(positonStep).getVideoURL() == null ||  stepArrayList.get(positonStep).getVideoURL().isEmpty()){
+        if (stepArrayList.get(positonStep).getVideoURL() == null || stepArrayList.get(positonStep).getVideoURL().isEmpty()) {
             vpStepDetail.setVisibility(View.GONE);
             Timber.d("getVideoURL empty");
-        }else{
+        } else {
             Timber.d("getVideoURL " + stepArrayList.get(positonStep).getVideoURL());
             vpStepDetail.setPlayer(player);
             Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
@@ -105,6 +105,7 @@ public class StepDetailFragment extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
     private MediaSource buildMediaSource(Uri uri) {
         return new ExtractorMediaSource.Factory(
                 new DefaultHttpDataSourceFactory("exoplayer-codelab")).

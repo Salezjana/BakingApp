@@ -3,7 +3,6 @@ package mrodkiewicz.pl.bakingapp.ui;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -54,7 +53,8 @@ public class MainActivity extends BaseAppCompatActivity implements
     @BindView(R.id.fragment_container)
     FrameLayout fragmentContainer;
     @BindView(R.id.fragment_container_left)
-    @Nullable FrameLayout fragmentContainerLeft;
+    @Nullable
+    FrameLayout fragmentContainerLeft;
     private ArrayList<Recipe> recipeArrayList;
     private RecipeDatabaseHelper recipeDatabaseHelper;
     private SharedPreferences preferences;
@@ -83,10 +83,10 @@ public class MainActivity extends BaseAppCompatActivity implements
         arrayListConverter = new ArrayListConverter();
 
         //check is table or smartphone
-        if (fragmentContainerLeft != null){
+        if (fragmentContainerLeft != null) {
             Timber.d("isTablet = true");
             isTablet = true;
-        }else{
+        } else {
             isTablet = false;
         }
 
@@ -172,7 +172,7 @@ public class MainActivity extends BaseAppCompatActivity implements
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (isTablet){
+        if (isTablet) {
             if (fragment.getClass() == RecipeDetailFragment.class) {
                 Timber.d("fragment.getClass() == RecipeListFragment.class ");
                 finish();
@@ -182,7 +182,7 @@ public class MainActivity extends BaseAppCompatActivity implements
                 fragmentManager.popBackStackImmediate();
             }
 
-        }else {
+        } else {
             if (fragment.getClass() == RecipeListFragment.class) {
                 Timber.d("fragment.getClass() == RecipeListFragment.class ");
                 finish();
@@ -334,7 +334,7 @@ public class MainActivity extends BaseAppCompatActivity implements
     }
 
     public void switchFragment(Fragment fragment, @Nullable Bundle bundleARGS) {
-        if (isTablet){
+        if (isTablet) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_in_left);
@@ -348,19 +348,19 @@ public class MainActivity extends BaseAppCompatActivity implements
                 setTitle(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
             }
             Fragment fragmenttest = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            if (fragmenttest == fragment){
+            if (fragmenttest == fragment) {
                 getSupportFragmentManager().beginTransaction().remove(fragmenttest).commit();
             }
             fragment.setArguments(bundle);
-            if (fragment.getClass() != recipeListFragment.getClass()){
+            if (fragment.getClass() != recipeListFragment.getClass()) {
                 fragmentTransaction
                         .replace(R.id.fragment_container, fragment);
-            }else{
+            } else {
                 fragmentTransaction
                         .replace(R.id.fragment_container_left, fragment);
             }
             fragmentTransaction.commit();
-        }else {
+        } else {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_in_left);
@@ -381,9 +381,9 @@ public class MainActivity extends BaseAppCompatActivity implements
     }
 
     private void startFirstFragment() {
-        if (isTablet){
+        if (isTablet) {
             switchFragment(recipeListFragment, null);
-        }else{
+        } else {
             switchFragment(recipeListFragment, null);
         }
         BakingWidgetProvider.setRecipeArrayList(recipeArrayList);
@@ -393,8 +393,6 @@ public class MainActivity extends BaseAppCompatActivity implements
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_recipe_list);
 
     }
-
-
 
 
 }

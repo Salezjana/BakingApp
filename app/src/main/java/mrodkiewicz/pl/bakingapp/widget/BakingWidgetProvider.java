@@ -6,12 +6,10 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
-import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 
-public class BakingWidgetProvider implements RemoteViewsService.RemoteViewsFactory{
+public class BakingWidgetProvider implements RemoteViewsService.RemoteViewsFactory {
 
     private static ArrayList<Recipe> recipeArrayList = new ArrayList<>();
     Context context = null;
@@ -68,6 +66,6 @@ public class BakingWidgetProvider implements RemoteViewsService.RemoteViewsFacto
     }
 
     public static void setRecipeArrayList(ArrayList<Recipe> recipeArrayList) {
-       BakingWidgetProvider.recipeArrayList = recipeArrayList;
+        BakingWidgetProvider.recipeArrayList = recipeArrayList;
     }
 }

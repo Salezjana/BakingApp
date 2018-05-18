@@ -1,19 +1,13 @@
 package mrodkiewicz.pl.bakingapp.widget;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import mrodkiewicz.pl.bakingapp.R;
-import mrodkiewicz.pl.bakingapp.helper.Config;
-import mrodkiewicz.pl.bakingapp.ui.MainActivity;
-import timber.log.Timber;
 
 /**
  * Implementation of App Widget functionality.

@@ -20,7 +20,6 @@ import butterknife.Unbinder;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.adapter.RecipesRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
-import mrodkiewicz.pl.bakingapp.db.models.Step;
 import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.listeners.RecyclerViewItemClickListener;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
@@ -47,7 +46,7 @@ public class RecipeListFragment extends Fragment {
         if (recipeArrayList == null) {
             recipeArrayList = new ArrayList<Recipe>();
         }
-        if (getArguments() != null){
+        if (getArguments() != null) {
             recipeArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST));
         }
     }
@@ -70,8 +69,8 @@ public class RecipeListFragment extends Fragment {
                 Timber.d("RecipeListFragment onItemClick " + position);
                 recipeDetailFragment = new RecipeDetailFragment();
                 MainActivity mainActivity = (MainActivity) getContext();
-                Bundle bundle= new Bundle();
-                bundle.putInt(Config.BUNDLE_KEY_POSITION,position);
+                Bundle bundle = new Bundle();
+                bundle.putInt(Config.BUNDLE_KEY_POSITION, position);
                 mainActivity.switchFragment(recipeDetailFragment, bundle);
             }
 

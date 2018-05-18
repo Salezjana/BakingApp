@@ -13,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -50,7 +49,7 @@ public class RecipeDetailFragment extends Fragment {
             recipeArrayList = new ArrayList<Recipe>();
             stepArrayList = new ArrayList<Step>();
         }
-        if (getArguments() != null){
+        if (getArguments() != null) {
             recipeArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST));
             positonR = getArguments().getInt(Config.BUNDLE_KEY_POSITION);
             stepArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST).get(positonR).getSteps());
@@ -66,6 +65,7 @@ public class RecipeDetailFragment extends Fragment {
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_fragmnet__recipe_detail, menu);

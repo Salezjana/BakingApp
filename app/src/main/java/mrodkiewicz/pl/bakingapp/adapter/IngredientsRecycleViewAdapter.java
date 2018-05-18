@@ -11,10 +11,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.db.models.Ingredient;
-import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import timber.log.Timber;
 
 
@@ -40,7 +38,7 @@ public class IngredientsRecycleViewAdapter extends RecyclerView.Adapter<Ingredie
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.textViewMain.setText(ingredientArrayList.get(position).getIngredient());
-        holder.textViewSmall.setText(String.valueOf(ingredientArrayList.get(position).getQuantity())+ " " + String.valueOf(ingredientArrayList.get(position).getMeasure()));
+        holder.textViewSmall.setText(String.valueOf(ingredientArrayList.get(position).getQuantity()) + " " + String.valueOf(ingredientArrayList.get(position).getMeasure()));
     }
 
     @Override
@@ -49,7 +47,7 @@ public class IngredientsRecycleViewAdapter extends RecyclerView.Adapter<Ingredie
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewMain,textViewSmall;
+        TextView textViewMain, textViewSmall;
 
 
         public ViewHolder(View itemView) {

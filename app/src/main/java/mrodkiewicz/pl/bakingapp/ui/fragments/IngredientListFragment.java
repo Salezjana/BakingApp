@@ -19,8 +19,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.adapter.IngredientsRecycleViewAdapter;
-import mrodkiewicz.pl.bakingapp.adapter.RecipesRecycleViewAdapter;
-import mrodkiewicz.pl.bakingapp.adapter.StepsRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.db.models.Ingredient;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.helper.Config;
@@ -50,7 +48,6 @@ public class IngredientListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setupView();
     }
-
 
 
     private void setupView() {

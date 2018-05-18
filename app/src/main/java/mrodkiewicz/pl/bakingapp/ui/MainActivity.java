@@ -3,6 +3,7 @@ package mrodkiewicz.pl.bakingapp.ui;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,7 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RemoteViews;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,6 @@ import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Optional;
 import mrodkiewicz.pl.bakingapp.BakingApp;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.api.APIService;
@@ -40,6 +39,8 @@ import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeDetailFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
+import mrodkiewicz.pl.bakingapp.widget.BakingWidget;
+import mrodkiewicz.pl.bakingapp.widget.BakingWidgetProvider;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -89,11 +90,13 @@ public class MainActivity extends BaseAppCompatActivity implements
             isTablet = false;
         }
 
+
         fragmentManager = getSupportFragmentManager();
 
         isDatabaseWithData = preferences.getBoolean(Config.PREFERENCES_KEY_DATABASE_STATE, false);
         invalidateOptionsMenu();
         loadRecipes();
+
 
         setupView(savedInstanceState);
 
@@ -142,6 +145,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         }
 
     }
+
 
     private void listToDatabse(List<Recipe> list) {
         recipeDatabaseHelper.deleteAllData();
@@ -382,16 +386,15 @@ public class MainActivity extends BaseAppCompatActivity implements
         }else{
             switchFragment(recipeListFragment, null);
         }
+        BakingWidgetProvider.setRecipeArrayList(recipeArrayList);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
+                new ComponentName(this, BakingWidget.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_recipe_list);
+
     }
 
-    public void refreshWiget(int id) {
-        preferences.edit().putInt(Config.PREFERENCES_KEY_POSITION, id).apply();
-        Context context = this;
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
-        ComponentName thisWidget = new ComponentName(context, BakingApp.class);
-        remoteViews.setTextViewText(R.id.appwidget_text, "LAST RECIPE:" + id);
-        appWidgetManager.updateAppWidget(thisWidget, remoteViews);
-    }
+
+
 
 }

@@ -70,7 +70,6 @@ public class RecipeListFragment extends Fragment {
                 Timber.d("RecipeListFragment onItemClick " + position);
                 recipeDetailFragment = new RecipeDetailFragment();
                 MainActivity mainActivity = (MainActivity) getContext();
-                mainActivity.refreshWiget(position);
                 Bundle bundle= new Bundle();
                 bundle.putInt(Config.BUNDLE_KEY_POSITION,position);
                 mainActivity.switchFragment(recipeDetailFragment, bundle);

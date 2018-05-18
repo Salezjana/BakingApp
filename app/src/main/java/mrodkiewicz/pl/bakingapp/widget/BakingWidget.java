@@ -1,50 +1,43 @@
 package mrodkiewicz.pl.bakingapp.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.helper.Config;
+import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 import timber.log.Timber;
 
 /**
  * Implementation of App Widget functionality.
  */
-public class BakingAppWidget extends AppWidgetProvider {
-    private static SharedPreferences preferences;
-
+public class BakingWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-        preferences = context.getSharedPreferences(Config.PREFERENCES_KEY,context.MODE_PRIVATE);
-        Timber.d("updateAppWidget" + preferences.getInt(Config.PREFERENCES_KEY_POSITION,-1));
-        CharSequence widgetText = context.getString(R.string.appwidget_text) + preferences.getInt(Config.PREFERENCES_KEY_POSITION,-1);
-        // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
-
-        // Instruct the widget manager to update the widget
+        setRemoteAdapter(context, views);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Timber.d("onUpdate" + context.getSharedPreferences(Config.PREFERENCES_KEY,Context.MODE_PRIVATE).getInt(Config.PREFERENCES_KEY_POSITION,-1));
+        // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
-    @Override
-    public void onEnabled(Context context) {
-
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-
+    private static void setRemoteAdapter(Context context, @NonNull final RemoteViews views) {
+        views.setRemoteAdapter(R.id.widget_recipe_list,
+                new Intent(context, BakingWidgetRemoteService.class));
     }
 }
 

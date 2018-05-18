@@ -1,5 +1,7 @@
 package mrodkiewicz.pl.bakingapp.ui;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -18,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.RemoteViews;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,7 @@ import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Optional;
 import mrodkiewicz.pl.bakingapp.BakingApp;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.api.APIService;
@@ -34,7 +38,6 @@ import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.helper.ArrayListConverter;
 import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
-import mrodkiewicz.pl.bakingapp.ui.fragments.IngredientListFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeDetailFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
 import retrofit2.Call;
@@ -49,6 +52,8 @@ public class MainActivity extends BaseAppCompatActivity implements
     private static final int TASK_LOADER_ID = 0;
     @BindView(R.id.fragment_container)
     FrameLayout fragmentContainer;
+    @BindView(R.id.fragment_container_left)
+    @Nullable FrameLayout fragmentContainerLeft;
     private ArrayList<Recipe> recipeArrayList;
     private RecipeDatabaseHelper recipeDatabaseHelper;
     private SharedPreferences preferences;
@@ -59,6 +64,7 @@ public class MainActivity extends BaseAppCompatActivity implements
     private FragmentManager fragmentManager;
     private Loader loader;
     private Menu menu;
+    private Boolean isTablet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +80,14 @@ public class MainActivity extends BaseAppCompatActivity implements
         recipeDatabaseHelper = new RecipeDatabaseHelper(this);
         SQLiteDatabase db = recipeDatabaseHelper.getWritableDatabase();
         arrayListConverter = new ArrayListConverter();
+
+        //check is table or smartphone
+        if (fragmentContainerLeft != null){
+            Timber.d("isTablet = true");
+            isTablet = true;
+        }else{
+            isTablet = false;
+        }
 
         fragmentManager = getSupportFragmentManager();
 
@@ -154,13 +168,25 @@ public class MainActivity extends BaseAppCompatActivity implements
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment.getClass() == RecipeListFragment.class) {
-            Timber.d("fragment.getClass() == RecipeListFragment.class ");
-            finish();
-            super.onBackPressed();
-        } else {
-            Timber.d("onBackPressed fragmentManager.popBackStackImmediate()");
-            fragmentManager.popBackStackImmediate();
+        if (isTablet){
+            if (fragment.getClass() == RecipeDetailFragment.class) {
+                Timber.d("fragment.getClass() == RecipeListFragment.class ");
+                finish();
+                super.onBackPressed();
+            } else {
+                Timber.d("onBackPressed fragmentManager.popBackStackImmediate()");
+                fragmentManager.popBackStackImmediate();
+            }
+
+        }else {
+            if (fragment.getClass() == RecipeListFragment.class) {
+                Timber.d("fragment.getClass() == RecipeListFragment.class ");
+                finish();
+                super.onBackPressed();
+            } else {
+                Timber.d("onBackPressed fragmentManager.popBackStackImmediate()");
+                fragmentManager.popBackStackImmediate();
+            }
         }
     }
 
@@ -303,28 +329,69 @@ public class MainActivity extends BaseAppCompatActivity implements
         startFirstFragment();
     }
 
-    public void switchFragment(Fragment fragment,@Nullable Bundle bundleARGS) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_in_left);
-        Bundle bundle= new Bundle();
-        bundle.putParcelableArrayList(Config.BUNDLE_RECIPELIST,recipeArrayList);
-        if (bundleARGS == null) {
-            setTitle(getString(R.string.app_name));
-        } else {
-            bundle.putInt(Config.BUNDLE_KEY_POSITION,bundleARGS.getInt(Config.BUNDLE_KEY_POSITION));
-            bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP,bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP));
-            setTitle(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
+    public void switchFragment(Fragment fragment, @Nullable Bundle bundleARGS) {
+        if (isTablet){
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_in_left);
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(Config.BUNDLE_RECIPELIST, recipeArrayList);
+            if (bundleARGS == null) {
+                setTitle(getString(R.string.app_name));
+            } else {
+                bundle.putInt(Config.BUNDLE_KEY_POSITION, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION));
+                bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP));
+                setTitle(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
+            }
+            Fragment fragmenttest = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if (fragmenttest == fragment){
+                getSupportFragmentManager().beginTransaction().remove(fragmenttest).commit();
+            }
+            fragment.setArguments(bundle);
+            if (fragment.getClass() != recipeListFragment.getClass()){
+                fragmentTransaction
+                        .replace(R.id.fragment_container, fragment);
+            }else{
+                fragmentTransaction
+                        .replace(R.id.fragment_container_left, fragment);
+            }
+            fragmentTransaction.commit();
+        }else {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_in_left);
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(Config.BUNDLE_RECIPELIST, recipeArrayList);
+            if (bundleARGS == null) {
+                setTitle(getString(R.string.app_name));
+            } else {
+                bundle.putInt(Config.BUNDLE_KEY_POSITION, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION));
+                bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP));
+                setTitle(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
+            }
+            fragment.setArguments(bundle);
+            fragmentTransaction
+                    .replace(R.id.fragment_container, fragment);
+            fragmentTransaction.commit();
         }
-        fragment.setArguments(bundle);
-        fragmentTransaction
-                .replace(R.id.fragment_container, fragment);
-        fragmentTransaction.commit();
     }
 
-    private void startFirstFragment(){
-        switchFragment(recipeListFragment, null);
+    private void startFirstFragment() {
+        if (isTablet){
+            switchFragment(recipeListFragment, null);
+        }else{
+            switchFragment(recipeListFragment, null);
+        }
     }
 
+    public void refreshWiget(int id) {
+        preferences.edit().putInt(Config.PREFERENCES_KEY_POSITION, id).apply();
+        Context context = this;
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
+        ComponentName thisWidget = new ComponentName(context, BakingApp.class);
+        remoteViews.setTextViewText(R.id.appwidget_text, "LAST RECIPE:" + id);
+        appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+    }
 
 }

@@ -37,7 +37,7 @@ public class RecipeDetailFragment extends Fragment {
     private ArrayList<Step> stepArrayList;
     private ArrayList<Recipe> recipeArrayList;
     private StepsRecycleViewAdapter stepsRecycleViewAdapter;
-    private int positon;
+    private int positonR;
 
     public RecipeDetailFragment() {
     }
@@ -52,8 +52,8 @@ public class RecipeDetailFragment extends Fragment {
         }
         if (getArguments() != null){
             recipeArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST));
-            positon = getArguments().getInt(Config.BUNDLE_KEY_POSITION);
-            stepArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST).get(positon).getSteps());
+            positonR = getArguments().getInt(Config.BUNDLE_KEY_POSITION);
+            stepArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST).get(positonR).getSteps());
         }
         setHasOptionsMenu(true);
 
@@ -78,7 +78,7 @@ public class RecipeDetailFragment extends Fragment {
             case R.id.action_show_ingredient:
                 MainActivity mainActivity = (MainActivity) getContext();
                 Bundle bundle = new Bundle();
-                bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, positon);
+                bundle.putInt(Config.BUNDLE_KEY_POSITION, positonR);
                 mainActivity.switchFragment(new IngredientListFragment(), bundle);
                 return true;
             default:
@@ -104,6 +104,7 @@ public class RecipeDetailFragment extends Fragment {
                 MainActivity mainActivity = (MainActivity) getContext();
                 Bundle bundle = new Bundle();
                 bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, position);
+                bundle.putInt(Config.BUNDLE_KEY_POSITION, positonR);
                 mainActivity.switchFragment(new StepDetailFragment(), bundle);
             }
 

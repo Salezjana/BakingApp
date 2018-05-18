@@ -61,7 +61,6 @@ public class RecipeListFragment extends Fragment {
 
         setupView();
         initListeners();
-        recipeDetailFragment = new RecipeDetailFragment();
     }
 
     private void initListeners() {
@@ -69,7 +68,9 @@ public class RecipeListFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 Timber.d("RecipeListFragment onItemClick " + position);
+                recipeDetailFragment = new RecipeDetailFragment();
                 MainActivity mainActivity = (MainActivity) getContext();
+                mainActivity.refreshWiget(position);
                 Bundle bundle= new Bundle();
                 bundle.putInt(Config.BUNDLE_KEY_POSITION,position);
                 mainActivity.switchFragment(recipeDetailFragment, bundle);

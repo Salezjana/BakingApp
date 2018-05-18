@@ -5,4 +5,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="action_refresh">REFRESH!</string>
     <string name="action_show_ingredient">Show me goods to buy</string>
+    <string name="appwidget_text">LAST RECIPE: </string>
+    <string name="add_widget">Add widget</string>
 </resources>

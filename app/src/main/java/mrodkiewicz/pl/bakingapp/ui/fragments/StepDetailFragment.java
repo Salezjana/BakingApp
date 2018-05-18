@@ -42,7 +42,7 @@ public class StepDetailFragment extends Fragment {
     Unbinder unbinder;
     private ArrayList<Step> stepArrayList;
     private StepsRecycleViewAdapter stepsRecycleViewAdapter;
-    private int positonStep;
+    private int positonStep,position;
     private ExoPlayer player;
 
     public StepDetailFragment() {
@@ -56,10 +56,11 @@ public class StepDetailFragment extends Fragment {
             stepArrayList = new ArrayList<Step>();
         }
         if (getArguments() != null) {
-            Timber.d("StepDetailFragment " + getArguments().getInt(Config.BUNDLE_KEY_POSITION_STEP));
+            Timber.d("StepDetailFragment R" + getArguments().getInt(Config.BUNDLE_KEY_POSITION));
+            Timber.d("StepDetailFragment S" + getArguments().getInt(Config.BUNDLE_KEY_POSITION_STEP));
             positonStep = getArguments().getInt(Config.BUNDLE_KEY_POSITION_STEP);
+            position = getArguments().getInt(Config.BUNDLE_KEY_POSITION);
             stepArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST).get(getArguments().getInt(Config.BUNDLE_KEY_POSITION)).getSteps());
-            Timber.d("StepDetailFragment " + stepArrayList.get(positonStep).getDescription());
 
         }
 

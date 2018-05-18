@@ -10,7 +10,9 @@ public class Config {
 
     public static String PREFERENCES_KEY = "bakingapp.PREFERENCES_KEY";
     public static String PREFERENCES_KEY_DATABASE_STATE = "bakingapp.PREFERENCES_KEY.database";
+    public static String PREFERENCES_KEY_POSITION = "bakingapp.POSITION";
     public static String BUNDLE_KEY_POSITION = "bakingapp.POSITION";
+
     public static String BUNDLE_KEY_POSITION_STEP = "bakingapp.POSITION.STEP";
 
 

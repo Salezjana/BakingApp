@@ -8,6 +8,10 @@ import android.provider.BaseColumns;
 public class Config {
     public static String BAKING_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
+    public static String EXO_STATE_RESUME_WINDOW = "resumeWindow";
+    public static String EXO_STATE_RESUME_POSITION = "resumePosition";
+    public static String EXO_STATE_PLAYER_FULLSCREEN = "playerFullscreen";
+
     public static String STATE_KEY_DATABASE_STATE = "bakingapp.PREFERENCES_KEY.database";
     public static String STATE_KEY_POSITION = "bakingapp.POSITION";
 

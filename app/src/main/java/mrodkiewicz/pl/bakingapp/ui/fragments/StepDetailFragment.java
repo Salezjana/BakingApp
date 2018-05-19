@@ -1,5 +1,6 @@
 package mrodkiewicz.pl.bakingapp.ui.fragments;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,8 +13,8 @@ import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -36,14 +37,17 @@ public class StepDetailFragment extends Fragment {
     @BindView(R.id.vp_step_detail)
     PlayerView vpStepDetail;
     @BindView(R.id.big_tv_step_detail)
+    @javax.annotation.Nullable
     TextView bigTvStepDetail;
     @BindView(R.id.medium_1_tv_tv)
+    @javax.annotation.Nullable
     TextView medium1TvTv;
     Unbinder unbinder;
     private ArrayList<Step> stepArrayList;
     private StepsRecycleViewAdapter stepsRecycleViewAdapter;
     private int positonStep, position;
-    private ExoPlayer player;
+    private SimpleExoPlayer player;
+
 
     public StepDetailFragment() {
     }
@@ -64,7 +68,19 @@ public class StepDetailFragment extends Fragment {
 
         }
 
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Timber.d("orientation portaitr");
+        } else {
+            if (medium1TvTv != null){
+                medium1TvTv.setVisibility(View.GONE);
+            }
+            if (bigTvStepDetail != null){
+                bigTvStepDetail.setVisibility(View.GONE);
+            }
+        }
+
     }
+
 
     private void setupView() {
         bigTvStepDetail.setText(stepArrayList.get(positonStep).getShortDescription());
@@ -75,6 +91,8 @@ public class StepDetailFragment extends Fragment {
 
         if (stepArrayList.get(positonStep).getVideoURL() == null || stepArrayList.get(positonStep).getVideoURL().isEmpty()) {
             vpStepDetail.setVisibility(View.GONE);
+            medium1TvTv.setVisibility(View.VISIBLE);
+            bigTvStepDetail.setVisibility(View.VISIBLE);
             Timber.d("getVideoURL empty");
         } else {
             Timber.d("getVideoURL " + stepArrayList.get(positonStep).getVideoURL());
@@ -88,7 +106,7 @@ public class StepDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_step_detail_fragmnet, container, false);
+        View view = inflater.inflate(R.layout.fragment_step_detail, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }

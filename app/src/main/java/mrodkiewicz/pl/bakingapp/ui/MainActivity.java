@@ -83,8 +83,8 @@ public class MainActivity extends BaseAppCompatActivity implements
         }
 
         if(savedInstanceState == null){
-            recipeListFragment = new RecipeListFragment();
             recipeDetailFragment = new RecipeDetailFragment();
+            recipeListFragment = new RecipeListFragment();
 
             recipeArrayList = new ArrayList<Recipe>();
             preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
@@ -101,10 +101,14 @@ public class MainActivity extends BaseAppCompatActivity implements
 
             setupView(savedInstanceState);
         }else{
-            hideProgressDialog();
+            recipeDetailFragment = new RecipeDetailFragment();
+            recipeListFragment = new RecipeListFragment();
+            recipeDatabaseHelper = new RecipeDatabaseHelper(this);
             recipeArrayList = new ArrayList<Recipe>();
             recipeArrayList.addAll(savedInstanceState.<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST));
             fragmentManager = getSupportFragmentManager();
+            preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+            hideProgressDialog();
         }
 
     }

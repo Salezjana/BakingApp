@@ -73,14 +73,6 @@ public class MainActivity extends BaseAppCompatActivity implements
         setContentView(R.layout.main_activity);
         showProgressDialog(null, "loading");
         ButterKnife.bind(this);
-        recipeListFragment = new RecipeListFragment();
-        recipeDetailFragment = new RecipeDetailFragment();
-
-        recipeArrayList = new ArrayList<Recipe>();
-        preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
-        recipeDatabaseHelper = new RecipeDatabaseHelper(this);
-        SQLiteDatabase db = recipeDatabaseHelper.getWritableDatabase();
-        arrayListConverter = new ArrayListConverter();
 
         //check is table or smartphone
         if (fragmentContainerLeft != null) {
@@ -90,15 +82,30 @@ public class MainActivity extends BaseAppCompatActivity implements
             isTablet = false;
         }
 
+        if(savedInstanceState == null){
+            recipeListFragment = new RecipeListFragment();
+            recipeDetailFragment = new RecipeDetailFragment();
 
-        fragmentManager = getSupportFragmentManager();
+            recipeArrayList = new ArrayList<Recipe>();
+            preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+            recipeDatabaseHelper = new RecipeDatabaseHelper(this);
+            SQLiteDatabase db = recipeDatabaseHelper.getWritableDatabase();
+            arrayListConverter = new ArrayListConverter();
 
-        isDatabaseWithData = preferences.getBoolean(Config.PREFERENCES_KEY_DATABASE_STATE, false);
-        invalidateOptionsMenu();
-        loadRecipes();
+            fragmentManager = getSupportFragmentManager();
+
+            isDatabaseWithData = preferences.getBoolean(Config.PREFERENCES_KEY_DATABASE_STATE, false);
+            invalidateOptionsMenu();
+            loadRecipes();
 
 
-        setupView(savedInstanceState);
+            setupView(savedInstanceState);
+        }else{
+            hideProgressDialog();
+            recipeArrayList = new ArrayList<Recipe>();
+            recipeArrayList.addAll(savedInstanceState.<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST));
+            fragmentManager = getSupportFragmentManager();
+        }
 
     }
 
@@ -278,6 +285,12 @@ public class MainActivity extends BaseAppCompatActivity implements
         this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(Config.BUNDLE_RECIPELIST, recipeArrayList);
     }
 
     @Override

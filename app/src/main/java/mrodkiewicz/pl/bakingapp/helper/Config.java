@@ -8,6 +8,9 @@ import android.provider.BaseColumns;
 public class Config {
     public static String BAKING_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
+    public static String STATE_KEY_DATABASE_STATE = "bakingapp.PREFERENCES_KEY.database";
+    public static String STATE_KEY_POSITION = "bakingapp.POSITION";
+
     public static String PREFERENCES_KEY = "bakingapp.PREFERENCES_KEY";
     public static String PREFERENCES_KEY_DATABASE_STATE = "bakingapp.PREFERENCES_KEY.database";
     public static String PREFERENCES_KEY_POSITION = "bakingapp.POSITION";

@@ -7,4 +7,5 @@
     <string name="action_show_ingredient">Show me goods to buy</string>
     <string name="appwidget_text">LAST RECIPE: </string>
     <string name="add_widget">Add widget</string>
+    <string name="action_show_fulllscreen">FULLSCREEN ZIOM</string>
 </resources>

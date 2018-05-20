@@ -1,5 +1,6 @@
 package mrodkiewicz.pl.bakingapp.ui.fragments;
 
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,6 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,6 +35,7 @@ import mrodkiewicz.pl.bakingapp.adapter.StepsRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
 import mrodkiewicz.pl.bakingapp.helper.Config;
+import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 import timber.log.Timber;
 
 public class StepDetailFragment extends Fragment {
@@ -79,6 +84,14 @@ public class StepDetailFragment extends Fragment {
             }
         }
 
+
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_fragmnet_step_detail, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 
@@ -100,6 +113,7 @@ public class StepDetailFragment extends Fragment {
             Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
             MediaSource mediaSource = buildMediaSource(uri);
             player.prepare(mediaSource, true, false);
+            setHasOptionsMenu(true);
         }
     }
 
@@ -109,6 +123,22 @@ public class StepDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_step_detail, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_show_fullscreen:
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

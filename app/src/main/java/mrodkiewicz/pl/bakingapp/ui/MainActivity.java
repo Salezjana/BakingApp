@@ -203,6 +203,11 @@ public class MainActivity extends BaseAppCompatActivity implements
                 fragmentManager.popBackStackImmediate();
             }
         }
+        if (fragment.getClass() == recipeDetailFragment.getClass()){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setTitle(getString(R.string.app_name
+            ));
+        }
     }
 
     @Override
@@ -322,6 +327,9 @@ public class MainActivity extends BaseAppCompatActivity implements
                 loadRecipes();
                 setupView(null);
                 return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -394,6 +402,11 @@ public class MainActivity extends BaseAppCompatActivity implements
             fragmentTransaction
                     .replace(R.id.fragment_container, fragment);
             fragmentTransaction.commit();
+        }
+        if (fragment.getClass() == recipeListFragment.getClass()){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }else{
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 

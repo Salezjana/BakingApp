@@ -129,15 +129,6 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public List<Step> getStepsFromRecipeWithID(int id) {
-        return null;
-
-    }
-
-    public List<Ingredient> getIngredientsFromRecipeWithID(int id) {
-        return null;
-    }
-
     public void deleteAllData() {
         getWritableDatabase().execSQL("delete from " + Config.TABLE_RECIPE);
         getWritableDatabase().execSQL("delete from " + Config.TABLE_INGREDIENT);

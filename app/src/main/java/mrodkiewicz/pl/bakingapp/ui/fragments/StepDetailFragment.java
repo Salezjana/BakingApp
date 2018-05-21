@@ -7,14 +7,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -24,6 +27,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -35,8 +39,9 @@ import mrodkiewicz.pl.bakingapp.adapter.StepsRecycleViewAdapter;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.db.models.Step;
 import mrodkiewicz.pl.bakingapp.helper.Config;
-import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 import timber.log.Timber;
+
+import static com.google.android.exoplayer2.C.TIME_UNSET;
 
 public class StepDetailFragment extends Fragment {
     @BindView(R.id.vp_step_detail)
@@ -48,10 +53,13 @@ public class StepDetailFragment extends Fragment {
     @javax.annotation.Nullable
     TextView medium1TvTv;
     Unbinder unbinder;
+    @BindView(R.id.iv_step_detail)
+    ImageView ivStepDetail;
     private ArrayList<Step> stepArrayList;
     private StepsRecycleViewAdapter stepsRecycleViewAdapter;
     private int positonStep, position;
     private SimpleExoPlayer player;
+    private long positionPlayer;
 
 
     public StepDetailFragment() {
@@ -73,17 +81,22 @@ public class StepDetailFragment extends Fragment {
 
         }
 
+        positionPlayer = TIME_UNSET;
+        if (savedInstanceState != null) {
+            Timber.d("ten long to " + savedInstanceState.getLong(Config.STATE_KEY_POSITION_VP, TIME_UNSET));
+            positionPlayer = savedInstanceState.getLong(Config.STATE_KEY_POSITION_VP, TIME_UNSET);
+        }
+
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             Timber.d("orientation portaitr");
         } else {
-            if (medium1TvTv != null){
+            if (medium1TvTv != null) {
                 medium1TvTv.setVisibility(View.GONE);
             }
-            if (bigTvStepDetail != null){
+            if (bigTvStepDetail != null) {
                 bigTvStepDetail.setVisibility(View.GONE);
             }
         }
-
 
 
     }
@@ -103,6 +116,11 @@ public class StepDetailFragment extends Fragment {
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
         if (stepArrayList.get(positonStep).getVideoURL() == null || stepArrayList.get(positonStep).getVideoURL().isEmpty()) {
+            if (stepArrayList.get(position).getThumbnailURL() != ""){
+                Timber.d("ACIDYSSS " + stepArrayList.get(positonStep).getThumbnailURL());
+                ivStepDetail.setVisibility(View.VISIBLE);
+                Picasso.with(getContext()).load(stepArrayList.get(positonStep).getThumbnailURL()).into(ivStepDetail);
+            }
             vpStepDetail.setVisibility(View.GONE);
             medium1TvTv.setVisibility(View.VISIBLE);
             bigTvStepDetail.setVisibility(View.VISIBLE);
@@ -113,8 +131,15 @@ public class StepDetailFragment extends Fragment {
             Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
             MediaSource mediaSource = buildMediaSource(uri);
             player.prepare(mediaSource, true, false);
+            player.seekTo(positionPlayer);
             setHasOptionsMenu(true);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        player.release();
     }
 
     @Override
@@ -134,8 +159,9 @@ public class StepDetailFragment extends Fragment {
                 } else {
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
-
                 return true;
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -158,5 +184,11 @@ public class StepDetailFragment extends Fragment {
         return new ExtractorMediaSource.Factory(
                 new DefaultHttpDataSourceFactory("exoplayer-codelab")).
                 createMediaSource(uri);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(Config.STATE_KEY_POSITION_VP, player.getCurrentPosition());
     }
 }

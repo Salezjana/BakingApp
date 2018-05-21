@@ -11,6 +11,12 @@
 
     </com.google.android.exoplayer2.ui.PlayerView>
 
+    <ImageView
+        android:id="@+id/iv_step_detail"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:visibility="gone" />
+
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

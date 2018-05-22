@@ -39,7 +39,6 @@ import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeDetailFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
 import mrodkiewicz.pl.bakingapp.widget.BakingWidget;
-import mrodkiewicz.pl.bakingapp.widget.BakingWidgetProvider;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -394,7 +393,6 @@ public class MainActivity extends BaseAppCompatActivity implements
             if (bundleARGS == null) {
                 setTitle(getString(R.string.app_name));
             } else {
-                bundle.putInt(Config.BUNDLE_KEY_POSITION, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION));
                 bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP));
                 setTitle(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
             }
@@ -416,7 +414,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         } else {
             switchFragment(recipeListFragment, null);
         }
-        BakingWidgetProvider.setRecipeArrayList(recipeArrayList);
+        BakingWidget.setRecipeArrayList(recipeArrayList);
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
                 new ComponentName(this, BakingWidget.class));

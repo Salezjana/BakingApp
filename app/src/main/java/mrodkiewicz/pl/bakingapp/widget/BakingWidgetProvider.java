@@ -41,7 +41,7 @@ public class BakingWidgetProvider implements RemoteViewsService.RemoteViewsFacto
     public RemoteViews getViewAt(int position) {
         RemoteViews view = new RemoteViews(context.getPackageName(),
                 android.R.layout.simple_list_item_1);
-        view.setTextViewText(android.R.id.text1, recipeArrayList.get(position).getName());
+        view.setTextViewText(android.R.id.text1, recipeArrayList.get(position).getIngredients().get(0).getIngredient());
         return view;
     }
 

@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,9 @@ public class MainActivity extends BaseAppCompatActivity implements
     private static final int TASK_LOADER_ID = 0;
     @BindView(R.id.fragment_container)
     FrameLayout fragmentContainer;
+    @BindView(R.id.fragment_container_main)
+    @Nullable
+    LinearLayout fragmentContainerMain;
     @BindView(R.id.fragment_container_left)
     @Nullable
     FrameLayout fragmentContainerLeft;
@@ -381,7 +385,7 @@ public class MainActivity extends BaseAppCompatActivity implements
                         .replace(R.id.fragment_container, fragment);
             } else {
                 fragmentTransaction
-                        .replace(R.id.fragment_container_left, fragment);
+                        .replace(R.id.fragment_container_main, fragment);
             }
             fragmentTransaction.commit();
         } else {
@@ -409,11 +413,7 @@ public class MainActivity extends BaseAppCompatActivity implements
     }
 
     private void startFirstFragment() {
-        if (isTablet) {
-            switchFragment(recipeListFragment, null);
-        } else {
-            switchFragment(recipeListFragment, null);
-        }
+        switchFragment(recipeListFragment, null);
         BakingWidget.setRecipeArrayList(recipeArrayList);
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
@@ -422,5 +422,7 @@ public class MainActivity extends BaseAppCompatActivity implements
 
     }
 
-
+    public Boolean getTablet() {
+        return isTablet;
+    }
 }

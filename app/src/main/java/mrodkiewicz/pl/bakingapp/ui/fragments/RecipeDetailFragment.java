@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -103,7 +104,7 @@ public class RecipeDetailFragment extends Fragment {
     private void setupView() {
         stepsRecycleViewAdapter = new StepsRecycleViewAdapter(getContext(), stepArrayList);
         stepRecycleviewlist.setAdapter(stepsRecycleViewAdapter);
-        stepRecycleviewlist.setLayoutManager(new LinearLayoutManager(getContext()));
+        stepRecycleviewlist.setLayoutManager(new GridLayoutManager(getContext(),1));
         stepRecycleviewlist.setItemAnimator(new DefaultItemAnimator());
         stepsRecycleViewAdapter.notifyDataSetChanged();
 

@@ -7,7 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -38,6 +41,12 @@ public class RecipesRecycleViewAdapter extends RecyclerView.Adapter<RecipesRecyc
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.textView.setText(recipeArrayList.get(position).getName());
+        if (!recipeArrayList.get(position).getImage().isEmpty()){
+            holder.imageView.setVisibility(View.VISIBLE);
+            Picasso.with(context).load(recipeArrayList.get(position).getImage()).into(holder.imageView);
+        }
+        holder.textViewSmall.setVisibility(View.VISIBLE);
+        holder.textViewSmall.setText("Servings: " + recipeArrayList.get(position).getServings());
 
     }
 
@@ -48,10 +57,14 @@ public class RecipesRecycleViewAdapter extends RecyclerView.Adapter<RecipesRecyc
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
+        TextView textViewSmall;
+        ImageView imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.textView_row_recipe);
+            textViewSmall = (TextView) itemView.findViewById(R.id.textView_small_row_recipe);
+            imageView = (ImageView) itemView.findViewById(R.id.imageView_row_recipe);
 
         }
 

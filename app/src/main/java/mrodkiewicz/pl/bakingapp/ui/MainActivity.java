@@ -375,6 +375,8 @@ public class MainActivity extends BaseAppCompatActivity implements
             }
             fragment.setArguments(bundle);
             if (fragment.getClass() != recipeListFragment.getClass()) {
+                getSupportFragmentManager().beginTransaction().remove(recipeListFragment).commit();
+
                 fragmentTransaction
                         .replace(R.id.fragment_container_left, fragment);
 

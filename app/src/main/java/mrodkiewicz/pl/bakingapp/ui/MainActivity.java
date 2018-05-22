@@ -39,6 +39,7 @@ import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeDetailFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
+import mrodkiewicz.pl.bakingapp.ui.fragments.StepDetailFragment;
 import mrodkiewicz.pl.bakingapp.widget.BakingWidget;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -187,15 +188,8 @@ public class MainActivity extends BaseAppCompatActivity implements
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (isTablet) {
-            if (fragment.getClass() == RecipeDetailFragment.class) {
-                Timber.d("fragment.getClass() == RecipeListFragment.class ");
-                finish();
-                super.onBackPressed();
-            } else {
                 Timber.d("onBackPressed fragmentManager.popBackStackImmediate()");
                 fragmentManager.popBackStackImmediate();
-            }
-
         } else {
             if (fragment.getClass() == RecipeListFragment.class) {
                 Timber.d("fragment.getClass() == RecipeListFragment.class ");
@@ -382,7 +376,12 @@ public class MainActivity extends BaseAppCompatActivity implements
             fragment.setArguments(bundle);
             if (fragment.getClass() != recipeListFragment.getClass()) {
                 fragmentTransaction
-                        .replace(R.id.fragment_container, fragment);
+                        .replace(R.id.fragment_container_left, fragment);
+
+                StepDetailFragment stepDetailFragment = new StepDetailFragment();
+                stepDetailFragment.setArguments(bundle);
+                fragmentTransaction
+                        .replace(R.id.fragment_container, stepDetailFragment);
             } else {
                 fragmentTransaction
                         .replace(R.id.fragment_container_main, fragment);

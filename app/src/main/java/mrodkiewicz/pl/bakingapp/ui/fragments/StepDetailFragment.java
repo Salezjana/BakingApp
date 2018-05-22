@@ -29,7 +29,12 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -116,10 +121,14 @@ public class StepDetailFragment extends Fragment {
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
         if (stepArrayList.get(positonStep).getVideoURL() == null || stepArrayList.get(positonStep).getVideoURL().isEmpty()) {
-            if (stepArrayList.get(position).getThumbnailURL() != ""){
-                Timber.d("ACIDYSSS " + stepArrayList.get(positonStep).getThumbnailURL());
-                ivStepDetail.setVisibility(View.VISIBLE);
-                Picasso.with(getContext()).load(stepArrayList.get(positonStep).getThumbnailURL()).into(ivStepDetail);
+            if (stepArrayList.get(positonStep).getThumbnailURL() != null && stepArrayList.get(positonStep).getThumbnailURL() != " " && !stepArrayList.get(positonStep).getThumbnailURL().isEmpty() ){
+                List valid = Arrays.asList("BMP", "IMG", "GIF", "PNG", "JPG", "JPEG", "TIFF");
+                String extension = stepArrayList.get(positonStep).getThumbnailURL().substring(stepArrayList.get(positonStep).getThumbnailURL().lastIndexOf("."));
+                if (valid.contains(extension)){
+                    Timber.d("ACIDYSSS " + stepArrayList.get(positonStep).getThumbnailURL());
+                    ivStepDetail.setVisibility(View.VISIBLE);
+                    Picasso.with(getContext()).load(stepArrayList.get(positonStep).getThumbnailURL()).into(ivStepDetail);
+                }
             }
             vpStepDetail.setVisibility(View.GONE);
             medium1TvTv.setVisibility(View.VISIBLE);

@@ -27,12 +27,18 @@ public class BakingWidget extends AppWidgetProvider {
     private static ArrayList<Recipe> recipeArrayList;
     private SharedPreferences preferences;
     private Context context;
+    private int recipePosition ;
 
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                          int appWidgetId) {
         this.context = context;
+        preferences = context.getSharedPreferences(Config.PREFERENCES_KEY,Context.MODE_PRIVATE);
+        recipePosition = preferences.getInt(Config.PREFERENCES_KEY_WIDGET_POSITION,2);
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
+        if (recipeArrayList != null){
+            views.setTextViewText(R.id.widget_text,recipeArrayList.get(0).getName());
+        }
         views.setOnClickPendingIntent(R.id.imageButton, getPendingSelfIntent(context, LEFT_IMAGE_CLICK));
         views.setOnClickPendingIntent(R.id.imageButton2, getPendingSelfIntent(context, RIGHT_IMAGE_CLICK));
         setRemoteAdapter(context, views);
@@ -56,7 +62,9 @@ public class BakingWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         // TODO Auto-generated method stub
         super.onReceive(context, intent);
+
         preferences = context.getSharedPreferences(Config.PREFERENCES_KEY,Context.MODE_PRIVATE);
+        recipePosition = preferences.getInt(Config.PREFERENCES_KEY_WIDGET_POSITION,2);
         if (LEFT_IMAGE_CLICK.equals(intent.getAction())) {
 
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -67,13 +75,16 @@ public class BakingWidget extends AppWidgetProvider {
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
             watchWidget = new ComponentName(context, BakingWidget.class);
 
-            Timber.d("ECIEPECIE");
-            preferences.edit().putInt(Config.PREFERENCES_KEY_POSITION, 3).apply();
 
-            if (recipeArrayList != null){
-                remoteViews.setTextViewText(R.id.widget_text,recipeArrayList.get(1).getName());
-
-            }
+                recipePosition -= 1;
+                preferences.edit().putInt(Config.PREFERENCES_KEY_WIDGET_POSITION, recipePosition).apply();
+                remoteViews.setTextViewText(R.id.widget_text,recipeArrayList.get(recipePosition).getName());
+//            }else{
+//                recipePosition = 0;
+//                preferences.edit().putInt(Config.PREFERENCES_KEY_POSITION, 0).apply();
+//                remoteViews.setTextViewText(R.id.widget_text,recipeArrayList.get(recipePosition).getName());
+//            }
+            Timber.d("ECIEPECIE  " + recipePosition);
 
             appWidgetManager = AppWidgetManager.getInstance(context);
             int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
@@ -92,17 +103,24 @@ public class BakingWidget extends AppWidgetProvider {
 
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
             watchWidget = new ComponentName(context, BakingWidget.class);
+//            if (recipePosition != recipeArrayList.size()){
+                preferences.edit().putInt(Config.PREFERENCES_KEY_WIDGET_POSITION, recipePosition ).apply();
+            remoteViews.setTextViewText(R.id.widget_text,recipeArrayList.get(recipePosition).getName());
+//            }else{
+//                recipePosition = 0;
+//                preferences.edit().putInt(Config.PREFERENCES_KEY_POSITION, 0).apply();
+//                remoteViews.setTextViewText(R.id.widget_text,recipeArrayList.get(recipePosition).getName());
+//            }
 
-            Timber.d("ECIEPECIE 2");
-            preferences.edit().putInt(Config.PREFERENCES_KEY_POSITION, 1).apply();
+            Timber.d("ECIEPECIE2  " + recipePosition);
+            recipePosition = recipePosition + 1;
+            Timber.d("ECIEPECIE2  " + recipePosition);
 
 
             appWidgetManager = AppWidgetManager.getInstance(context);
             int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, BakingWidget.class));
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_recipe_list);
-
-            remoteViews.setTextViewText(R.id.widget_text,"xdd 2");
 
             appWidgetManager.updateAppWidget(watchWidget, remoteViews);
 

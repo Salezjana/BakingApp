@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
+import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 import timber.log.Timber;
 
@@ -23,12 +25,13 @@ public class BakingWidget extends AppWidgetProvider {
     private static final String LEFT_IMAGE_CLICK    = "LEFT_IMAGE_CLICK";
     private static final String RIGHT_IMAGE_CLICK    = "RIGHT_IMAGE_CLICK";
     private static ArrayList<Recipe> recipeArrayList;
-    private int position;
+    private SharedPreferences preferences;
     private Context context;
 
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                          int appWidgetId) {
         this.context = context;
+
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
         views.setOnClickPendingIntent(R.id.imageButton, getPendingSelfIntent(context, LEFT_IMAGE_CLICK));
         views.setOnClickPendingIntent(R.id.imageButton2, getPendingSelfIntent(context, RIGHT_IMAGE_CLICK));
@@ -53,7 +56,7 @@ public class BakingWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         // TODO Auto-generated method stub
         super.onReceive(context, intent);
-
+        preferences = context.getSharedPreferences(Config.PREFERENCES_KEY,Context.MODE_PRIVATE);
         if (LEFT_IMAGE_CLICK.equals(intent.getAction())) {
 
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -65,12 +68,17 @@ public class BakingWidget extends AppWidgetProvider {
             watchWidget = new ComponentName(context, BakingWidget.class);
 
             Timber.d("ECIEPECIE");
+            preferences.edit().putInt(Config.PREFERENCES_KEY_POSITION, 3).apply();
 
             if (recipeArrayList != null){
                 remoteViews.setTextViewText(R.id.widget_text,recipeArrayList.get(1).getName());
 
             }
 
+            appWidgetManager = AppWidgetManager.getInstance(context);
+            int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
+                    new ComponentName(context, BakingWidget.class));
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_recipe_list);
 
             appWidgetManager.updateAppWidget(watchWidget, remoteViews);
 
@@ -86,6 +94,13 @@ public class BakingWidget extends AppWidgetProvider {
             watchWidget = new ComponentName(context, BakingWidget.class);
 
             Timber.d("ECIEPECIE 2");
+            preferences.edit().putInt(Config.PREFERENCES_KEY_POSITION, 1).apply();
+
+
+            appWidgetManager = AppWidgetManager.getInstance(context);
+            int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
+                    new ComponentName(context, BakingWidget.class));
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_recipe_list);
 
             remoteViews.setTextViewText(R.id.widget_text,"xdd 2");
 
@@ -100,10 +115,6 @@ public class BakingWidget extends AppWidgetProvider {
         return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 
-
-    private void setIngredients(Context context){
-
-    }
 
     public static void setRecipeArrayList(ArrayList<Recipe> recipeArrayList) {
         BakingWidget.recipeArrayList = new ArrayList<>();

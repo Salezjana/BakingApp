@@ -3,6 +3,7 @@ package mrodkiewicz.pl.bakingapp.ui;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -415,11 +416,14 @@ public class MainActivity extends BaseAppCompatActivity implements
 
     private void startFirstFragment() {
         switchFragment(recipeListFragment, null);
-        BakingWidget.setRecipeArrayList(recipeArrayList);
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
-                new ComponentName(this, BakingWidget.class));
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_recipe_list);
+
+        Intent intent = new Intent(this, BakingWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = AppWidgetManager.getInstance(getApplication())
+                .getAppWidgetIds(new ComponentName(getApplication(), BakingWidget.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        intent.putParcelableArrayListExtra(Config.BUNDLE_RECIPELIST,recipeArrayList);
+        sendBroadcast(intent);
 
     }
 

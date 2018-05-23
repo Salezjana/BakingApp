@@ -36,7 +36,6 @@ public class BakingWidgetProvider implements RemoteViewsService.RemoteViewsFacto
     public void onDataSetChanged() {
         Timber.d("onDataSetChanged " + preferences.getInt(Config.PREFERENCES_KEY_POSITION,0));
         positionRecipe = preferences.getInt(Config.PREFERENCES_KEY_POSITION,0);
-
     }
 
     @Override

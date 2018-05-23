@@ -16,15 +16,14 @@ import java.util.ArrayList;
 import mrodkiewicz.pl.bakingapp.R;
 import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.helper.Config;
-import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 import timber.log.Timber;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class BakingWidget extends AppWidgetProvider {
-    private static final String LEFT_IMAGE_CLICK    = "LEFT_IMAGE_CLICK";
-    private static final String RIGHT_IMAGE_CLICK    = "RIGHT_IMAGE_CLICK";
+    private static final String LEFT_IMAGE_CLICK = "LEFT_IMAGE_CLICK";
+    private static final String RIGHT_IMAGE_CLICK = "RIGHT_IMAGE_CLICK";
     private static ArrayList<Recipe> recipeArrayList;
     private SharedPreferences preferences;
     private Context context;
@@ -35,12 +34,12 @@ public class BakingWidget extends AppWidgetProvider {
                          int appWidgetId) {
         this.context = context;
 
-        preferences = context.getSharedPreferences(Config.PREFERENCES_KEY,Context.MODE_PRIVATE);
-        recipePosition = preferences.getInt(Config.PREFERENCES_KEY_WIDGET_POSITION,0);
+        preferences = context.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        recipePosition = preferences.getInt(Config.PREFERENCES_KEY_WIDGET_POSITION, 0);
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
-        if (recipeArrayList != null){
-            views.setTextViewText(R.id.widget_text,recipeArrayList.get(0).getName());
+        if (recipeArrayList != null) {
+            views.setTextViewText(R.id.widget_text, recipeArrayList.get(0).getName());
         }
         views.setOnClickPendingIntent(R.id.imageButton, getPendingSelfIntent(context, LEFT_IMAGE_CLICK));
         views.setOnClickPendingIntent(R.id.imageButton2, getPendingSelfIntent(context, RIGHT_IMAGE_CLICK));
@@ -61,6 +60,7 @@ public class BakingWidget extends AppWidgetProvider {
     private static void setRemoteAdapter(Context context, @NonNull final RemoteViews views) {
         views.setRemoteAdapter(R.id.widget_recipe_list, new Intent(context, BakingWidgetRemoteService.class));
     }
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -71,10 +71,10 @@ public class BakingWidget extends AppWidgetProvider {
 
         remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
         watchWidget = new ComponentName(context, BakingWidget.class);
-        preferences = context.getSharedPreferences(Config.PREFERENCES_KEY,Context.MODE_PRIVATE);
-        recipePosition = preferences.getInt(Config.PREFERENCES_KEY_WIDGET_POSITION,2);
+        preferences = context.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        recipePosition = preferences.getInt(Config.PREFERENCES_KEY_WIDGET_POSITION, 2);
 
-        if (intent.<Recipe>getParcelableArrayListExtra(Config.BUNDLE_RECIPELIST) != null){
+        if (intent.<Recipe>getParcelableArrayListExtra(Config.BUNDLE_RECIPELIST) != null) {
             recipeArrayList = new ArrayList<>();
             recipeArrayList.addAll(intent.<Recipe>getParcelableArrayListExtra(Config.BUNDLE_RECIPELIST));
             BakingWidgetProvider.setRecipeArrayList(recipeArrayList);
@@ -82,7 +82,7 @@ public class BakingWidget extends AppWidgetProvider {
 
 
         if (LEFT_IMAGE_CLICK.equals(intent.getAction())) {
-            if (recipePosition != 0){
+            if (recipePosition != 0) {
                 recipePosition -= 1;
                 preferences.edit().putInt(Config.PREFERENCES_KEY_WIDGET_POSITION, recipePosition).apply();
                 Timber.d("ECIEPECIE  " + recipePosition);
@@ -90,16 +90,16 @@ public class BakingWidget extends AppWidgetProvider {
 
         }
         if (RIGHT_IMAGE_CLICK.equals(intent.getAction())) {
-            if (recipePosition < recipeArrayList.size()-1){
+            if (recipePosition < recipeArrayList.size() - 1) {
                 recipePosition += 1;
                 preferences.edit().putInt(Config.PREFERENCES_KEY_WIDGET_POSITION, recipePosition).apply();
                 Timber.d("ECIEPECIE2  " + recipePosition);
             }
-            preferences.edit().putInt(Config.PREFERENCES_KEY_WIDGET_POSITION, recipePosition ).apply();
+            preferences.edit().putInt(Config.PREFERENCES_KEY_WIDGET_POSITION, recipePosition).apply();
 
         }
-        if (recipeArrayList != null){
-            remoteViews.setTextViewText(R.id.widget_text,recipeArrayList.get(recipePosition).getName());
+        if (recipeArrayList != null) {
+            remoteViews.setTextViewText(R.id.widget_text, recipeArrayList.get(recipePosition).getName());
             Timber.d("ECIEPECIE3  " + recipePosition);
         }
 

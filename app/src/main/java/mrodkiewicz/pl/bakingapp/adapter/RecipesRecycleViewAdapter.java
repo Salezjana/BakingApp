@@ -41,7 +41,7 @@ public class RecipesRecycleViewAdapter extends RecyclerView.Adapter<RecipesRecyc
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.textView.setText(recipeArrayList.get(position).getName());
-        if (!recipeArrayList.get(position).getImage().isEmpty()){
+        if (!recipeArrayList.get(position).getImage().isEmpty()) {
             holder.imageView.setVisibility(View.VISIBLE);
             Picasso.with(context).load(recipeArrayList.get(position).getImage()).into(holder.imageView);
         }

@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,13 +103,13 @@ public class RecipeDetailFragment extends Fragment {
     private void setupView() {
         stepsRecycleViewAdapter = new StepsRecycleViewAdapter(getContext(), stepArrayList);
         stepRecycleviewlist.setAdapter(stepsRecycleViewAdapter);
-        stepRecycleviewlist.setLayoutManager(new GridLayoutManager(getContext(),1));
+        stepRecycleviewlist.setLayoutManager(new GridLayoutManager(getContext(), 1));
         stepRecycleviewlist.setItemAnimator(new DefaultItemAnimator());
         stepsRecycleViewAdapter.notifyDataSetChanged();
 
         String string = "";
         StringBuilder stringBuilder = new StringBuilder(string);
-        for (Ingredient ingredient:recipeArrayList.get(positonR).getIngredients()){
+        for (Ingredient ingredient : recipeArrayList.get(positonR).getIngredients()) {
             stringBuilder.append(ingredient.getIngredient());
             stringBuilder.append(" ");
             stringBuilder.append(ingredient.getQuantity());

@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,10 +85,10 @@ public class RecipeListFragment extends Fragment {
         recipesRecycleViewAdapter = new RecipesRecycleViewAdapter(getContext(), recipeArrayList);
         recipesRecycleView.setAdapter(recipesRecycleViewAdapter);
         MainActivity mainActivity = (MainActivity) getContext();
-        if (mainActivity.getTablet()){
-            recipesRecycleView.setLayoutManager(new GridLayoutManager(getContext(),3));
-        }else{
-            recipesRecycleView.setLayoutManager(new GridLayoutManager(getContext(),1));
+        if (mainActivity.getTablet()) {
+            recipesRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        } else {
+            recipesRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         }
         recipesRecycleView.setItemAnimator(new DefaultItemAnimator());
         recipesRecycleViewAdapter.notifyDataSetChanged();

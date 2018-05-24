@@ -86,18 +86,6 @@ public class StepDetailFragment extends Fragment {
             positionPlayer = savedInstanceState.getLong(Config.STATE_KEY_POSITION_VP, TIME_UNSET);
         }
 
-//            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//                Timber.d("orientation portaitr");
-//            } else {
-//                if (medium1TvTv != null) {
-//                    medium1TvTv.setVisibility(View.GONE);
-//                }
-//                if (bigTvStepDetail != null) {
-//                    bigTvStepDetail.setVisibility(View.GONE);
-//                }
-//
-//        }
-
 
     }
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragments.FullScreenForTabletFragment">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/vp_step_detail"
+        android:layout_width="match_parent"
+        android:background="@color/material_color_black"
+        android:layout_height="match_parent">
+
+    </com.google.android.exoplayer2.ui.PlayerView>
+
+</FrameLayout>

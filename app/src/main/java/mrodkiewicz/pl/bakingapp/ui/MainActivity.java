@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ import mrodkiewicz.pl.bakingapp.db.models.Recipe;
 import mrodkiewicz.pl.bakingapp.helper.ArrayListConverter;
 import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.base.BaseAppCompatActivity;
+import mrodkiewicz.pl.bakingapp.ui.fragments.FullScreenForTabletFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeDetailFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.RecipeListFragment;
 import mrodkiewicz.pl.bakingapp.ui.fragments.StepDetailFragment;
@@ -118,6 +120,7 @@ public class MainActivity extends BaseAppCompatActivity implements
             fragmentManager = getSupportFragmentManager();
             preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
             hideProgressDialog();
+
         }
 
 
@@ -139,6 +142,9 @@ public class MainActivity extends BaseAppCompatActivity implements
             loader = getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, this);
         } else {
             if (isInternetEnable()) {
+                for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                }
                 APIService apiService = BakingApp.getClient().create(APIService.class);
                 Call<List<Recipe>> call;
                 call = apiService.getRecipes();
@@ -284,6 +290,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         } else {
             cursorToList(data);
         }
+
         Timber.d("CONTENT_URI " + Config.CONTENT_URI);
         hideProgressDialog();
     }
@@ -313,6 +320,7 @@ public class MainActivity extends BaseAppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Config.BUNDLE_RECIPELIST, recipeArrayList);
+
     }
 
     @Override
@@ -451,4 +459,43 @@ public class MainActivity extends BaseAppCompatActivity implements
     public Boolean getTablet() {
         return isTablet;
     }
+
+    public void setFullScreen(int positonStep, long positionPlayer) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(Config.BUNDLE_RECIPELIST, recipeArrayList);
+        bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, positonStep);
+        bundle.putLong(Config.BUNDLE_KEY_POSITION, positionPlayer);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (isTablet) {
+            Fragment test = getSupportFragmentManager().findFragmentById(R.id.fragment_container_main);
+            Timber.d("REPREZNTUJ " + test.getClass());
+            if (test.getClass() == FullScreenForTabletFragment.class) {
+                for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                }
+                switchFragment(recipeDetailFragment, bundle);
+            } else {
+                for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                }
+                FullScreenForTabletFragment fullScreenForTabletFragment = new FullScreenForTabletFragment();
+                fullScreenForTabletFragment.setArguments(bundle);
+                fragmentTransaction
+                        .replace(R.id.fragment_container_main, fullScreenForTabletFragment).commit();
+            }
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        } else {
+            if (getResources().getConfiguration().orientation == getResources().getConfiguration().ORIENTATION_PORTRAIT) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+
+    }
+
 }
+

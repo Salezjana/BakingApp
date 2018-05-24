@@ -11,8 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -23,11 +21,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,18 +37,11 @@ import timber.log.Timber;
 
 import static com.google.android.exoplayer2.C.TIME_UNSET;
 
-public class StepDetailFragment extends Fragment {
+
+public class FullScreenForTabletFragment extends Fragment {
     @BindView(R.id.vp_step_detail)
     PlayerView vpStepDetail;
-    @BindView(R.id.big_tv_step_detail)
-    @javax.annotation.Nullable
-    TextView bigTvStepDetail;
-    @BindView(R.id.medium_1_tv_tv)
-    @javax.annotation.Nullable
-    TextView medium1TvTv;
     Unbinder unbinder;
-    @BindView(R.id.iv_step_detail)
-    ImageView ivStepDetail;
     private ArrayList<Step> stepArrayList;
     private StepsRecycleViewAdapter stepsRecycleViewAdapter;
     private int positonStep, position;
@@ -61,7 +49,7 @@ public class StepDetailFragment extends Fragment {
     private long positionPlayer;
 
 
-    public StepDetailFragment() {
+    public FullScreenForTabletFragment() {
     }
 
 
@@ -86,18 +74,6 @@ public class StepDetailFragment extends Fragment {
             positionPlayer = savedInstanceState.getLong(Config.STATE_KEY_POSITION_VP, TIME_UNSET);
         }
 
-//            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//                Timber.d("orientation portaitr");
-//            } else {
-//                if (medium1TvTv != null) {
-//                    medium1TvTv.setVisibility(View.GONE);
-//                }
-//                if (bigTvStepDetail != null) {
-//                    bigTvStepDetail.setVisibility(View.GONE);
-//                }
-//
-//        }
-
 
     }
 
@@ -109,35 +85,18 @@ public class StepDetailFragment extends Fragment {
 
 
     private void setupView() {
-        bigTvStepDetail.setText(stepArrayList.get(positonStep).getShortDescription());
-        medium1TvTv.setText(stepArrayList.get(positonStep).getDescription());
         player = ExoPlayerFactory.newSimpleInstance(
                 new DefaultRenderersFactory(getActivity()),
                 new DefaultTrackSelector(), new DefaultLoadControl());
+        Timber.d("getVideoURL " + stepArrayList.get(positonStep).getVideoURL());
+        vpStepDetail.setPlayer(player);
+        Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
+        MediaSource mediaSource = buildMediaSource(uri);
+        player.prepare(mediaSource, true, false);
+        player.seekTo(positionPlayer);
+        setHasOptionsMenu(true);
 
-        if (stepArrayList.get(positonStep).getVideoURL() == null || stepArrayList.get(positonStep).getVideoURL().isEmpty()) {
-            if (stepArrayList.get(positonStep).getThumbnailURL() != null && stepArrayList.get(positonStep).getThumbnailURL() != " " && !stepArrayList.get(positonStep).getThumbnailURL().isEmpty()) {
-                List valid = Arrays.asList("BMP", "IMG", "GIF", "PNG", "JPG", "JPEG", "TIFF");
-                String extension = stepArrayList.get(positonStep).getThumbnailURL().substring(stepArrayList.get(positonStep).getThumbnailURL().lastIndexOf("."));
-                if (valid.contains(extension)) {
-                    Timber.d("ACIDYSSS " + stepArrayList.get(positonStep).getThumbnailURL());
-                    ivStepDetail.setVisibility(View.VISIBLE);
-                    Picasso.with(getContext()).load(stepArrayList.get(positonStep).getThumbnailURL()).into(ivStepDetail);
-                }
-            }
-            vpStepDetail.setVisibility(View.GONE);
-            medium1TvTv.setVisibility(View.VISIBLE);
-            bigTvStepDetail.setVisibility(View.VISIBLE);
-            Timber.d("getVideoURL empty");
-        } else {
-            Timber.d("getVideoURL " + stepArrayList.get(positonStep).getVideoURL());
-            vpStepDetail.setPlayer(player);
-            Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
-            MediaSource mediaSource = buildMediaSource(uri);
-            player.prepare(mediaSource, true, false);
-            player.seekTo(positionPlayer);
-            setHasOptionsMenu(true);
-        }
+
     }
 
     @Override
@@ -149,7 +108,7 @@ public class StepDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_step_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_full_screen_for_tablet, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -160,7 +119,6 @@ public class StepDetailFragment extends Fragment {
             case R.id.action_show_fullscreen:
                 MainActivity mainActivity = (MainActivity) getContext();
                 mainActivity.setFullScreen(positonStep, positionPlayer);
-                Timber.d("UGA GUGA AAA");
                 return true;
 
             default:

@@ -49,6 +49,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
+import static mrodkiewicz.pl.bakingapp.helper.Config.PREFERENCES_KEY_APPBAR;
+import static mrodkiewicz.pl.bakingapp.helper.Config.PREFERENCES_KEY_TABLET;
+
 public class MainActivity extends BaseAppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -121,6 +124,22 @@ public class MainActivity extends BaseAppCompatActivity implements
             preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
             hideProgressDialog();
 
+            Timber.d("DOBRZE ");
+            if (isTablet){
+                Fragment fragmentTEST = getSupportFragmentManager().findFragmentById(R.id.fragment_container_main);
+                if (preferences.getBoolean(PREFERENCES_KEY_TABLET,false)){
+                    getSupportActionBar().setTitle(preferences.getString(Config.PREFERENCES_KEY_APPBAR,"BakingApp"));
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    Timber.d("DOBRZE rz");
+                }
+            }else{
+                Fragment fragmentTEST = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if (recipeListFragment.getClass() != fragmentTEST.getClass()){
+                    getSupportActionBar().setTitle(preferences.getString(Config.PREFERENCES_KEY_APPBAR,"BakingApp"));
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    Timber.d("DOBRZE tez");
+                }
+            }
         }
 
 
@@ -223,10 +242,16 @@ public class MainActivity extends BaseAppCompatActivity implements
             }
         }
         if (fragment.getClass() == recipeDetailFragment.getClass()) {
+
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            getSupportActionBar().setTitle(getString(R.string.app_name
-            ));
+            setTitleAndSaveIt(getString(R.string.app_name));
         }
+    }
+
+    public void setTitleAndSaveIt(String string) {
+        getSupportActionBar().setTitle(string);
+        preferences.edit().putString(PREFERENCES_KEY_APPBAR,string).apply();
+        Timber.d("DOBRZE " + preferences.getString(PREFERENCES_KEY_APPBAR,"asd"));
     }
 
     @Override
@@ -387,15 +412,17 @@ public class MainActivity extends BaseAppCompatActivity implements
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(Config.BUNDLE_RECIPELIST, recipeArrayList);
             if (bundleARGS == null) {
-                setTitle(getString(R.string.app_name));
+                setTitleAndSaveIt(getString(R.string.app_name));
             } else {
                 bundle.putInt(Config.BUNDLE_KEY_POSITION, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION));
                 bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP));
-                setTitle(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
+                setTitleAndSaveIt(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
             }
 
             fragment.setArguments(bundle);
             if (fragment.getClass() != recipeListFragment.getClass()) {
+                getSupportFragmentManager().beginTransaction().remove(recipeListFragment).commit();
+                preferences.edit().putBoolean(PREFERENCES_KEY_TABLET, true).apply();
                 if (fragment.getClass() == stepDetailFragment.getClass()) {
                     getSupportFragmentManager().beginTransaction().remove(stepDetailFragment).commit();
 
@@ -415,6 +442,10 @@ public class MainActivity extends BaseAppCompatActivity implements
 
                 }
             } else {
+                for (Fragment fragment1 : getSupportFragmentManager().getFragments()) {
+                    getSupportFragmentManager().beginTransaction().remove(fragment1).commit();
+                }
+                preferences.edit().putBoolean(PREFERENCES_KEY_TABLET, false).apply();
                 fragmentTransaction
                         .replace(R.id.fragment_container_main, fragment);
 
@@ -426,10 +457,10 @@ public class MainActivity extends BaseAppCompatActivity implements
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(Config.BUNDLE_RECIPELIST, recipeArrayList);
             if (bundleARGS == null) {
-                setTitle(getString(R.string.app_name));
+                setTitleAndSaveIt(getString(R.string.app_name));
             } else {
                 bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP));
-                setTitle(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
+                setTitleAndSaveIt(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
             }
             fragment.setArguments(bundle);
             fragmentTransaction
@@ -441,6 +472,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         } else {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
     }
 
     private void startFirstFragment() {

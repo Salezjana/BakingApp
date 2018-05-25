@@ -59,7 +59,6 @@ public class RecipeDetailFragment extends Fragment {
             stepArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST).get(positonR).getSteps());
         }
         setHasOptionsMenu(true);
-
     }
 
     @Override

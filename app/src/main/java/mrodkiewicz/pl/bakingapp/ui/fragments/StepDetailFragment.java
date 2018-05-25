@@ -62,6 +62,7 @@ public class StepDetailFragment extends Fragment {
 
 
     public StepDetailFragment() {
+       
     }
 
 

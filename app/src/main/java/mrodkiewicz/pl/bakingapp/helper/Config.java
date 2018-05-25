@@ -8,24 +8,23 @@ import android.provider.BaseColumns;
 public class Config {
     public static String BAKING_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
-
-    public static String STATE_KEY_DATABASE_STATE = "bakingapp.PREFERENCES_KEY.database";
-    public static String STATE_KEY_POSITION = "bakingapp.POSITION";
-
-    public static String STATE_KEY_POSITION_VP = "bakingapp.POSITION";
+    public static String STATE_KEY_POSITION_VP = "bakingapp.POSITION_VP";
+    public static String STATE_KEY_POSITION_VP_IS_PLAYING = "bakingapp.POSITION_IS_PLAYING";
 
     public static String PREFERENCES_KEY = "bakingapp.PREFERENCES_KEY";
     public static String PREFERENCES_KEY_DATABASE_STATE = "bakingapp.PREFERENCES_KEY.database";
     public static String PREFERENCES_KEY_POSITION = "bakingapp.POSITION";
-    public static String PREFERENCES_KEY_WIDGET_POSITION = "bakingapp.POSITION";
+    public static String PREFERENCES_KEY_WIDGET_POSITION = "bakingapp.POSITION_W";
     public static String PREFERENCES_KEY_APPBAR = "bakingapp.APP_BAR";
     public static String PREFERENCES_KEY_TABLET = "bakingapp.TABLRT";
     public static String BUNDLE_KEY_POSITION = "bakingapp.POSITION_BUNDLE";
 
     public static String BUNDLE_KEY_POSITION_STEP = "bakingapp.POSITION.STEP";
 
-
     public static String BUNDLE_RECIPELIST = "bakingapp.BUNDLE_RECIPELIST";
+    public static String BUNDLE_FRAGMENT = "bakingapp.BUNDLE_FRAGMENT";
+    public static String BUNDLE_RECIPE_POSITON = "bakingapp.BUNDLE_RECIPE_POSTIONX";
+    public static String BUNDLE_STEP_POSITION = "bakingapp.BUNDLE_STEP_POSITIONX";
 
     public static final String CONTENT_AUTHORITY = "mrodkiewicz.pl.bakingapp";
 

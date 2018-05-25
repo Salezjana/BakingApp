@@ -1,5 +1,7 @@
 package mrodkiewicz.pl.bakingapp.ui.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,8 +42,6 @@ import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 import timber.log.Timber;
 
-import static com.google.android.exoplayer2.C.TIME_UNSET;
-
 public class StepDetailFragment extends Fragment {
     @BindView(R.id.vp_step_detail)
     PlayerView vpStepDetail;
@@ -59,10 +59,12 @@ public class StepDetailFragment extends Fragment {
     private int positonStep, position;
     private SimpleExoPlayer player;
     private long positionPlayer;
+    private SharedPreferences preferences;
+    private boolean isPlaying;
 
 
     public StepDetailFragment() {
-       
+
     }
 
 
@@ -81,12 +83,10 @@ public class StepDetailFragment extends Fragment {
 
         }
 
-        positionPlayer = TIME_UNSET;
-        if (savedInstanceState != null) {
-            Timber.d("ten long to " + savedInstanceState.getLong(Config.STATE_KEY_POSITION_VP, TIME_UNSET));
-            positionPlayer = savedInstanceState.getLong(Config.STATE_KEY_POSITION_VP, TIME_UNSET);
-        }
 
+        preferences = getActivity().getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        positionPlayer = preferences.getLong(Config.STATE_KEY_POSITION_VP, 0);
+        isPlaying = preferences.getBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, false);
 
     }
 
@@ -100,10 +100,6 @@ public class StepDetailFragment extends Fragment {
     private void setupView() {
         bigTvStepDetail.setText(stepArrayList.get(positonStep).getShortDescription());
         medium1TvTv.setText(stepArrayList.get(positonStep).getDescription());
-        player = ExoPlayerFactory.newSimpleInstance(
-                new DefaultRenderersFactory(getActivity()),
-                new DefaultTrackSelector(), new DefaultLoadControl());
-
         if (stepArrayList.get(positonStep).getVideoURL() == null || stepArrayList.get(positonStep).getVideoURL().isEmpty()) {
             if (stepArrayList.get(positonStep).getThumbnailURL() != null && stepArrayList.get(positonStep).getThumbnailURL() != " " && !stepArrayList.get(positonStep).getThumbnailURL().isEmpty()) {
                 List valid = Arrays.asList("BMP", "IMG", "GIF", "PNG", "JPG", "JPEG", "TIFF");
@@ -120,19 +116,64 @@ public class StepDetailFragment extends Fragment {
             Timber.d("getVideoURL empty");
         } else {
             Timber.d("getVideoURL " + stepArrayList.get(positonStep).getVideoURL());
-            vpStepDetail.setPlayer(player);
-            Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
-            MediaSource mediaSource = buildMediaSource(uri);
-            player.prepare(mediaSource, true, false);
-            player.seekTo(positionPlayer);
-            setHasOptionsMenu(true);
+            initPlayer();
+        }
+    }
+
+    private void initPlayer() {
+        player = ExoPlayerFactory.newSimpleInstance(
+                new DefaultRenderersFactory(getActivity()),
+                new DefaultTrackSelector(), new DefaultLoadControl());
+        vpStepDetail.setPlayer(player);
+        Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
+        MediaSource mediaSource = buildMediaSource(uri);
+        player.prepare(mediaSource, true, false);
+        player.setPlayWhenReady(true);
+        player.seekTo(positionPlayer);
+        setHasOptionsMenu(true);
+    }
+    private void releasePlayer() {
+        if (player != null) {
+            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING,false);
+            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP,player.getCurrentPosition());
+            player.release();
+            player = null;
+
         }
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        player.release();
+    public void onStart() {
+        super.onStart();
+        if (player == null){
+            initPlayer();
+
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (player == null){
+            initPlayer();
+
+        }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releasePlayer();
+
     }
 
     @Override
@@ -179,6 +220,5 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(Config.STATE_KEY_POSITION_VP, player.getCurrentPosition());
     }
 }

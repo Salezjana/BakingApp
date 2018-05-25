@@ -1,5 +1,7 @@
 package mrodkiewicz.pl.bakingapp.ui.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -47,7 +49,8 @@ public class FullScreenForTabletFragment extends Fragment {
     private int positonStep, position;
     private SimpleExoPlayer player;
     private long positionPlayer;
-
+    private SharedPreferences preferences;
+    private boolean isPlaying;
 
     public FullScreenForTabletFragment() {
     }
@@ -68,11 +71,10 @@ public class FullScreenForTabletFragment extends Fragment {
 
         }
 
-        positionPlayer = TIME_UNSET;
-        if (savedInstanceState != null) {
-            Timber.d("ten long to " + savedInstanceState.getLong(Config.STATE_KEY_POSITION_VP, TIME_UNSET));
-            positionPlayer = savedInstanceState.getLong(Config.STATE_KEY_POSITION_VP, TIME_UNSET);
-        }
+
+        preferences = getActivity().getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        positionPlayer = preferences.getLong(Config.STATE_KEY_POSITION_VP, 0);
+        isPlaying = preferences.getBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, false);
 
 
     }
@@ -85,24 +87,66 @@ public class FullScreenForTabletFragment extends Fragment {
 
 
     private void setupView() {
-        player = ExoPlayerFactory.newSimpleInstance(
-                new DefaultRenderersFactory(getActivity()),
-                new DefaultTrackSelector(), new DefaultLoadControl());
-        Timber.d("getVideoURL " + stepArrayList.get(positonStep).getVideoURL());
-        vpStepDetail.setPlayer(player);
-        Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
-        MediaSource mediaSource = buildMediaSource(uri);
-        player.prepare(mediaSource, true, false);
-        player.seekTo(positionPlayer);
-        setHasOptionsMenu(true);
+       initPlayer();
+       setHasOptionsMenu(true);
 
 
     }
 
+    private void initPlayer() {
+        player = ExoPlayerFactory.newSimpleInstance(
+                new DefaultRenderersFactory(getActivity()),
+                new DefaultTrackSelector(), new DefaultLoadControl());
+        vpStepDetail.setPlayer(player);
+        Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
+        MediaSource mediaSource = buildMediaSource(uri);
+        player.prepare(mediaSource, true, false);
+        player.setPlayWhenReady(true);
+        player.seekTo(positionPlayer);
+        setHasOptionsMenu(true);
+    }
+    private void releasePlayer() {
+        if (player != null) {
+            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING,false);
+            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP,player.getCurrentPosition());
+            player.release();
+            player = null;
+
+        }
+    }
+
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        player.release();
+    public void onStart() {
+        super.onStart();
+        if (player == null){
+            initPlayer();
+
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (player == null){
+            initPlayer();
+
+        }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releasePlayer();
+
     }
 
     @Override
@@ -148,6 +192,5 @@ public class FullScreenForTabletFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(Config.STATE_KEY_POSITION_VP, player.getCurrentPosition());
     }
 }

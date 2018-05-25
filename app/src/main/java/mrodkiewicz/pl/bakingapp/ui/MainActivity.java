@@ -77,6 +77,8 @@ public class MainActivity extends BaseAppCompatActivity implements
     private Loader loader;
     private Menu menu;
     private Boolean isTablet;
+    private int positonRecipe, postionStep;
+    private String lastFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +112,7 @@ public class MainActivity extends BaseAppCompatActivity implements
             invalidateOptionsMenu();
             loadRecipes();
 
+            Timber.d("WAZNE BARDZO NULL");
 
             setupView(savedInstanceState);
         } else {
@@ -124,23 +127,29 @@ public class MainActivity extends BaseAppCompatActivity implements
             preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
             hideProgressDialog();
 
+            Timber.d("WAZNE BARDZO NIE NULL");
+
             Timber.d("DOBRZE ");
-            if (isTablet){
+            if (isTablet) {
                 Fragment fragmentTEST = getSupportFragmentManager().findFragmentById(R.id.fragment_container_main);
-                if (preferences.getBoolean(PREFERENCES_KEY_TABLET,false)){
-                    getSupportActionBar().setTitle(preferences.getString(Config.PREFERENCES_KEY_APPBAR,"BakingApp"));
+                if (preferences.getBoolean(PREFERENCES_KEY_TABLET, false)) {
+                    getSupportActionBar().setTitle(preferences.getString(Config.PREFERENCES_KEY_APPBAR, "BakingApp"));
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     Timber.d("DOBRZE rz");
                 }
-            }else{
+            } else {
                 Fragment fragmentTEST = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                if (recipeListFragment.getClass() != fragmentTEST.getClass()){
-                    getSupportActionBar().setTitle(preferences.getString(Config.PREFERENCES_KEY_APPBAR,"BakingApp"));
+                if (recipeListFragment.getClass() != fragmentTEST.getClass()) {
+                    getSupportActionBar().setTitle(preferences.getString(Config.PREFERENCES_KEY_APPBAR, "BakingApp"));
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     Timber.d("DOBRZE tez");
                 }
             }
+
         }
+        preferences.edit().remove(Config.BUNDLE_RECIPE_POSITON).apply();
+        preferences.edit().remove(Config.BUNDLE_STEP_POSITION).apply();
+        preferences.edit().remove(Config.BUNDLE_FRAGMENT).apply();
 
 
     }
@@ -250,8 +259,8 @@ public class MainActivity extends BaseAppCompatActivity implements
 
     public void setTitleAndSaveIt(String string) {
         getSupportActionBar().setTitle(string);
-        preferences.edit().putString(PREFERENCES_KEY_APPBAR,string).apply();
-        Timber.d("DOBRZE " + preferences.getString(PREFERENCES_KEY_APPBAR,"asd"));
+        preferences.edit().putString(PREFERENCES_KEY_APPBAR, string).apply();
+        Timber.d("DOBRZE " + preferences.getString(PREFERENCES_KEY_APPBAR, "asd"));
     }
 
     @Override
@@ -345,6 +354,9 @@ public class MainActivity extends BaseAppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Config.BUNDLE_RECIPELIST, recipeArrayList);
+        outState.putString(Config.BUNDLE_FRAGMENT, String.valueOf(recipeListFragment.getClass()));
+        outState.putInt(Config.BUNDLE_RECIPE_POSITON, preferences.getInt(Config.BUNDLE_RECIPE_POSITON, 0));
+        outState.putInt(Config.BUNDLE_STEP_POSITION, preferences.getInt(Config.BUNDLE_STEP_POSITION, 0));
 
     }
 
@@ -405,6 +417,7 @@ public class MainActivity extends BaseAppCompatActivity implements
     }
 
     public void switchFragment(Fragment fragment, @Nullable Bundle bundleARGS) {
+        preferences.edit().putString(Config.BUNDLE_FRAGMENT, String.valueOf(fragment.getClass())).apply();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (isTablet) {
             fragmentTransaction.addToBackStack(null);
@@ -416,6 +429,8 @@ public class MainActivity extends BaseAppCompatActivity implements
             } else {
                 bundle.putInt(Config.BUNDLE_KEY_POSITION, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION));
                 bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP));
+                preferences.edit().putInt(Config.BUNDLE_RECIPE_POSITON, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).apply();
+                preferences.edit().putInt(Config.BUNDLE_STEP_POSITION, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP)).apply();
                 setTitleAndSaveIt(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
             }
 
@@ -460,6 +475,9 @@ public class MainActivity extends BaseAppCompatActivity implements
                 setTitleAndSaveIt(getString(R.string.app_name));
             } else {
                 bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP));
+                bundle.putInt(Config.BUNDLE_KEY_POSITION, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION));
+                preferences.edit().putInt(Config.BUNDLE_RECIPE_POSITON, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).apply();
+                preferences.edit().putInt(Config.BUNDLE_STEP_POSITION, bundleARGS.getInt(Config.BUNDLE_KEY_POSITION_STEP)).apply();
                 setTitleAndSaveIt(recipeArrayList.get(bundleARGS.getInt(Config.BUNDLE_KEY_POSITION)).getName());
             }
             fragment.setArguments(bundle);

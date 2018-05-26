@@ -79,6 +79,7 @@ public class MainActivity extends BaseAppCompatActivity implements
     private Boolean isTablet;
     private int positonRecipe, postionStep;
     private String lastFragment;
+    private boolean shouldReturn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         showProgressDialog(null, "loading");
         ButterKnife.bind(this);
 
+        preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
         //check is table or smartphone
         if (fragmentContainerLeft != null) {
             Timber.d("isTablet = true");
@@ -96,12 +98,13 @@ public class MainActivity extends BaseAppCompatActivity implements
         }
 
         if (savedInstanceState == null) {
+            Timber.d("bekolandia savedInstanceState == null");
             recipeDetailFragment = new RecipeDetailFragment();
             recipeListFragment = new RecipeListFragment();
             stepDetailFragment = new StepDetailFragment();
 
             recipeArrayList = new ArrayList<Recipe>();
-            preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+
             recipeDatabaseHelper = new RecipeDatabaseHelper(this);
             SQLiteDatabase db = recipeDatabaseHelper.getWritableDatabase();
             arrayListConverter = new ArrayListConverter();
@@ -115,7 +118,10 @@ public class MainActivity extends BaseAppCompatActivity implements
             Timber.d("WAZNE BARDZO NULL");
 
             setupView(savedInstanceState);
+
+
         } else {
+            Timber.d("bekolandia savedInstanceState != null");
             recipeDetailFragment = new RecipeDetailFragment();
             recipeListFragment = new RecipeListFragment();
             stepDetailFragment = new StepDetailFragment();
@@ -124,12 +130,8 @@ public class MainActivity extends BaseAppCompatActivity implements
             recipeArrayList = new ArrayList<Recipe>();
             recipeArrayList.addAll(savedInstanceState.<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST));
             fragmentManager = getSupportFragmentManager();
-            preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
             hideProgressDialog();
 
-            Timber.d("WAZNE BARDZO NIE NULL");
-
-            Timber.d("DOBRZE ");
             if (isTablet) {
                 Fragment fragmentTEST = getSupportFragmentManager().findFragmentById(R.id.fragment_container_main);
                 if (preferences.getBoolean(PREFERENCES_KEY_TABLET, false)) {
@@ -145,8 +147,9 @@ public class MainActivity extends BaseAppCompatActivity implements
                     Timber.d("DOBRZE tez");
                 }
             }
-
         }
+
+
         preferences.edit().remove(Config.BUNDLE_RECIPE_POSITON).apply();
         preferences.edit().remove(Config.BUNDLE_STEP_POSITION).apply();
         preferences.edit().remove(Config.BUNDLE_FRAGMENT).apply();
@@ -162,6 +165,44 @@ public class MainActivity extends BaseAppCompatActivity implements
             Timber.d("setupView ");
         }
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        preferences.edit().putBoolean(Config.BUNDLE_RETURN, true).apply();
+        Timber.d("bekolandia ONPAUSE");
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        Timber.d("bekolandia onResume" + preferences.getBoolean(Config.BUNDLE_RETURN, false));
+        if (preferences.getBoolean(Config.BUNDLE_RETURN, false)) {
+            recipeDetailFragment = new RecipeDetailFragment();
+            Timber.d("bekolandia BUNDLE RETURN == treue");
+            String savedFragment = preferences.getString(Config.BUNDLE_FRAGMENT, null);
+            Timber.d("preferences.getString(Config.BUNDLE_FRAGMENT,null) == " + savedFragment);
+            Timber.d("preferences.getString(Config.BUNDLE_FRAGMENT,null) == " + recipeDetailFragment.getClass());
+            if (savedFragment.equals(String.valueOf(this.recipeDetailFragment.getClass()))) {
+                Timber.d("bekolandia if  " + savedFragment.equals(String.valueOf(recipeDetailFragment.getClass())));
+                Bundle bundle = new Bundle();
+                bundle.putInt(Config.BUNDLE_KEY_POSITION, preferences.getInt(Config.BUNDLE_RECIPE_POSITON, 0));
+                bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, preferences.getInt(Config.BUNDLE_STEP_POSITION, 0));
+                switchFragment(recipeDetailFragment, bundle);
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        preferences.edit().putBoolean(Config.BUNDLE_RETURN, false);
+        Timber.d("bekolandia onDestroy");
     }
 
     private void loadRecipes() {

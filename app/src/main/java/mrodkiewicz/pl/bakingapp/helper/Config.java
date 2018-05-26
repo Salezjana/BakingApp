@@ -25,6 +25,7 @@ public class Config {
     public static String BUNDLE_FRAGMENT = "bakingapp.BUNDLE_FRAGMENT";
     public static String BUNDLE_RECIPE_POSITON = "bakingapp.BUNDLE_RECIPE_POSTIONX";
     public static String BUNDLE_STEP_POSITION = "bakingapp.BUNDLE_STEP_POSITIONX";
+    public static String BUNDLE_RETURN = "bakingapp.RETUNR";
 
     public static final String CONTENT_AUTHORITY = "mrodkiewicz.pl.bakingapp";
 

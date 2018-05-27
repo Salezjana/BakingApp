@@ -79,7 +79,7 @@ public class MainActivity extends BaseAppCompatActivity implements
     private Boolean isTablet;
     private int positonRecipe, postionStep;
     private String lastFragment;
-    private boolean shouldReturn = false;
+    private boolean canLoad = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +153,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         preferences.edit().remove(Config.BUNDLE_RECIPE_POSITON).apply();
         preferences.edit().remove(Config.BUNDLE_STEP_POSITION).apply();
         preferences.edit().remove(Config.BUNDLE_FRAGMENT).apply();
-
+        canLoad = true;
 
     }
 
@@ -172,6 +172,7 @@ public class MainActivity extends BaseAppCompatActivity implements
         super.onPause();
         preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
         preferences.edit().putBoolean(Config.BUNDLE_RETURN, true).apply();
+        canLoad = false;
         Timber.d("bekolandia ONPAUSE");
     }
 
@@ -183,25 +184,37 @@ public class MainActivity extends BaseAppCompatActivity implements
         Timber.d("bekolandia onResume" + preferences.getBoolean(Config.BUNDLE_RETURN, false));
         if (preferences.getBoolean(Config.BUNDLE_RETURN, false)) {
             recipeDetailFragment = new RecipeDetailFragment();
+            stepDetailFragment = new StepDetailFragment();
+            recipeListFragment = new RecipeListFragment();
             Timber.d("bekolandia BUNDLE RETURN == treue");
-            String savedFragment = preferences.getString(Config.BUNDLE_FRAGMENT, null);
+            String savedFragment = preferences.getString(Config.BUNDLE_FRAGMENT, "");
             Timber.d("preferences.getString(Config.BUNDLE_FRAGMENT,null) == " + savedFragment);
             Timber.d("preferences.getString(Config.BUNDLE_FRAGMENT,null) == " + recipeDetailFragment.getClass());
-            if (savedFragment.equals(String.valueOf(this.recipeDetailFragment.getClass()))) {
+            if (savedFragment.equals(String.valueOf(recipeDetailFragment.getClass()))) {
                 Timber.d("bekolandia if  " + savedFragment.equals(String.valueOf(recipeDetailFragment.getClass())));
                 Bundle bundle = new Bundle();
                 bundle.putInt(Config.BUNDLE_KEY_POSITION, preferences.getInt(Config.BUNDLE_RECIPE_POSITON, 0));
                 bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, preferences.getInt(Config.BUNDLE_STEP_POSITION, 0));
                 switchFragment(recipeDetailFragment, bundle);
+            }else if (savedFragment.equals(String.valueOf(recipeListFragment.getClass()))) {
+                Timber.d("bekolandia if  " + savedFragment.equals(String.valueOf(recipeDetailFragment.getClass())));
+                switchFragment(recipeListFragment, null);
+            }else if (savedFragment.equals(String.valueOf(stepDetailFragment.getClass()))) {
+                Timber.d("bekolandia if  " + savedFragment.equals(String.valueOf(recipeDetailFragment.getClass())));
+                Bundle bundle = new Bundle();
+                bundle.putInt(Config.BUNDLE_KEY_POSITION, preferences.getInt(Config.BUNDLE_RECIPE_POSITON, 0));
+                bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, preferences.getInt(Config.BUNDLE_STEP_POSITION, 0));
+                switchFragment(stepDetailFragment, bundle);
             }
         }
+        canLoad = true;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         preferences = this.getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
-        preferences.edit().putBoolean(Config.BUNDLE_RETURN, false);
+        preferences.edit().remove(Config.BUNDLE_RETURN).apply();
         Timber.d("bekolandia onDestroy");
     }
 
@@ -454,11 +467,14 @@ public class MainActivity extends BaseAppCompatActivity implements
         }
         recipeArrayList.clear();
         recipeArrayList.addAll(recipesTMP);
-        startFirstFragment();
+        if (canLoad){
+            startFirstFragment();
+        }
     }
 
     public void switchFragment(Fragment fragment, @Nullable Bundle bundleARGS) {
         preferences.edit().putString(Config.BUNDLE_FRAGMENT, String.valueOf(fragment.getClass())).apply();
+        Timber.d("putString(Config.BUNDLE_FRAGMENT, "+ String.valueOf(fragment.getClass()));
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (isTablet) {
             fragmentTransaction.addToBackStack(null);

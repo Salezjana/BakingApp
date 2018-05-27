@@ -37,8 +37,6 @@ import mrodkiewicz.pl.bakingapp.helper.Config;
 import mrodkiewicz.pl.bakingapp.ui.MainActivity;
 import timber.log.Timber;
 
-import static com.google.android.exoplayer2.C.TIME_UNSET;
-
 
 public class FullScreenForTabletFragment extends Fragment {
     @BindView(R.id.vp_step_detail)
@@ -63,11 +61,14 @@ public class FullScreenForTabletFragment extends Fragment {
             stepArrayList = new ArrayList<Step>();
         }
         if (getArguments() != null) {
-            Timber.d("StepDetailFragment R" + getArguments().getInt(Config.BUNDLE_KEY_POSITION));
-            Timber.d("StepDetailFragment S" + getArguments().getInt(Config.BUNDLE_KEY_POSITION_STEP));
+            Timber.d("FullScreenForTabletFragment R" + getArguments().getInt(Config.BUNDLE_KEY_POSITION));
+            Timber.d("FullScreenForTabletFragment S" + getArguments().getInt(Config.BUNDLE_KEY_POSITION_STEP));
             positonStep = getArguments().getInt(Config.BUNDLE_KEY_POSITION_STEP);
             position = getArguments().getInt(Config.BUNDLE_KEY_POSITION);
             stepArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST).get(getArguments().getInt(Config.BUNDLE_KEY_POSITION)).getSteps());
+
+        } else {
+            Timber.d("FullScreenForTabletFragment getArgumrnts == null");
 
         }
 
@@ -87,8 +88,8 @@ public class FullScreenForTabletFragment extends Fragment {
 
 
     private void setupView() {
-       initPlayer();
-       setHasOptionsMenu(true);
+        initPlayer();
+        setHasOptionsMenu(true);
 
 
     }
@@ -105,10 +106,11 @@ public class FullScreenForTabletFragment extends Fragment {
         player.seekTo(positionPlayer);
         setHasOptionsMenu(true);
     }
+
     private void releasePlayer() {
         if (player != null) {
-            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING,false);
-            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP,player.getCurrentPosition());
+            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, false).apply();
+            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP, player.getCurrentPosition()).apply();
             player.release();
             player = null;
 
@@ -118,7 +120,7 @@ public class FullScreenForTabletFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (player == null){
+        if (player == null) {
             initPlayer();
 
         }
@@ -128,7 +130,7 @@ public class FullScreenForTabletFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (player == null){
+        if (player == null) {
             initPlayer();
 
         }

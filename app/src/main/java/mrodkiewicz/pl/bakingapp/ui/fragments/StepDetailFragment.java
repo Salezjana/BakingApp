@@ -132,10 +132,11 @@ public class StepDetailFragment extends Fragment {
         player.seekTo(positionPlayer);
         setHasOptionsMenu(true);
     }
+
     private void releasePlayer() {
         if (player != null) {
-            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING,false);
-            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP,player.getCurrentPosition());
+            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, false).apply();
+            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP, player.getCurrentPosition()).apply();
             player.release();
             player = null;
 
@@ -145,7 +146,7 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (player == null){
+        if (player == null) {
             initPlayer();
 
         }
@@ -155,7 +156,7 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (player == null){
+        if (player == null) {
             initPlayer();
 
         }
@@ -174,6 +175,14 @@ public class StepDetailFragment extends Fragment {
         super.onStop();
         releasePlayer();
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        preferences = getActivity().getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        preferences.edit().remove(Config.STATE_KEY_POSITION_VP).apply();
+        preferences.edit().remove(Config.STATE_KEY_POSITION_VP_IS_PLAYING).apply();
     }
 
     @Override

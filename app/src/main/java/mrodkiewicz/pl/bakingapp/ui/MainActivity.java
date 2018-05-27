@@ -196,10 +196,10 @@ public class MainActivity extends BaseAppCompatActivity implements
                 bundle.putInt(Config.BUNDLE_KEY_POSITION, preferences.getInt(Config.BUNDLE_RECIPE_POSITON, 0));
                 bundle.putInt(Config.BUNDLE_KEY_POSITION_STEP, preferences.getInt(Config.BUNDLE_STEP_POSITION, 0));
                 switchFragment(recipeDetailFragment, bundle);
-            }else if (savedFragment.equals(String.valueOf(recipeListFragment.getClass()))) {
+            } else if (savedFragment.equals(String.valueOf(recipeListFragment.getClass()))) {
                 Timber.d("bekolandia if  " + savedFragment.equals(String.valueOf(recipeDetailFragment.getClass())));
                 switchFragment(recipeListFragment, null);
-            }else if (savedFragment.equals(String.valueOf(stepDetailFragment.getClass()))) {
+            } else if (savedFragment.equals(String.valueOf(stepDetailFragment.getClass()))) {
                 Timber.d("bekolandia if  " + savedFragment.equals(String.valueOf(recipeDetailFragment.getClass())));
                 Bundle bundle = new Bundle();
                 bundle.putInt(Config.BUNDLE_KEY_POSITION, preferences.getInt(Config.BUNDLE_RECIPE_POSITON, 0));
@@ -467,14 +467,14 @@ public class MainActivity extends BaseAppCompatActivity implements
         }
         recipeArrayList.clear();
         recipeArrayList.addAll(recipesTMP);
-        if (canLoad){
+        if (canLoad) {
             startFirstFragment();
         }
     }
 
     public void switchFragment(Fragment fragment, @Nullable Bundle bundleARGS) {
         preferences.edit().putString(Config.BUNDLE_FRAGMENT, String.valueOf(fragment.getClass())).apply();
-        Timber.d("putString(Config.BUNDLE_FRAGMENT, "+ String.valueOf(fragment.getClass()));
+        Timber.d("putString(Config.BUNDLE_FRAGMENT, " + String.valueOf(fragment.getClass()));
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (isTablet) {
             fragmentTransaction.addToBackStack(null);

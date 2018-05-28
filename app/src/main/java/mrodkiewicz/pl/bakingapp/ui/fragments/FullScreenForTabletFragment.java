@@ -77,6 +77,12 @@ public class FullScreenForTabletFragment extends Fragment {
         positionPlayer = preferences.getLong(Config.STATE_KEY_POSITION_VP, 0);
         isPlaying = preferences.getBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, false);
 
+        if (savedInstanceState != null) {
+            positionPlayer = savedInstanceState.getLong("position", 0);
+            isPlaying = savedInstanceState.getBoolean("state", false);
+            Timber.d("To nie null XDDD " + positionPlayer + isPlaying);
+        }
+
 
     }
 
@@ -109,8 +115,10 @@ public class FullScreenForTabletFragment extends Fragment {
 
     private void releasePlayer() {
         if (player != null) {
-            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, false).apply();
-            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP, player.getCurrentPosition()).apply();
+            positionPlayer = player.getContentPosition();
+            isPlaying = player.getPlayWhenReady();
+            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, isPlaying).apply();
+            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP, positionPlayer).apply();
             player.release();
             player = null;
 
@@ -193,6 +201,9 @@ public class FullScreenForTabletFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putLong("position", positionPlayer);
+        outState.putBoolean("state", isPlaying);
+        Timber.d("zapinae XDDD " + positionPlayer + isPlaying);
         super.onSaveInstanceState(outState);
     }
 }

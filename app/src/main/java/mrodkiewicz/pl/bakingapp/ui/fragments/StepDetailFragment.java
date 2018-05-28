@@ -60,7 +60,7 @@ public class StepDetailFragment extends Fragment {
     private SimpleExoPlayer player;
     private long positionPlayer;
     private SharedPreferences preferences;
-    private boolean isPlaying;
+    private boolean isPlaying = false;
 
 
     public StepDetailFragment() {
@@ -78,8 +78,8 @@ public class StepDetailFragment extends Fragment {
             Timber.d("StepDetailFragment R" + getArguments().getInt(Config.BUNDLE_KEY_POSITION));
             Timber.d("StepDetailFragment S" + getArguments().getInt(Config.BUNDLE_KEY_POSITION_STEP));
             positonStep = getArguments().getInt(Config.BUNDLE_KEY_POSITION_STEP);
-            position = getArguments().getInt(Config.BUNDLE_KEY_POSITION);
             stepArrayList.addAll(getArguments().<Recipe>getParcelableArrayList(Config.BUNDLE_RECIPELIST).get(getArguments().getInt(Config.BUNDLE_KEY_POSITION)).getSteps());
+            position = getArguments().getInt(Config.BUNDLE_KEY_POSITION);
 
         }
 
@@ -87,6 +87,12 @@ public class StepDetailFragment extends Fragment {
         preferences = getActivity().getSharedPreferences(Config.PREFERENCES_KEY, Context.MODE_PRIVATE);
         positionPlayer = preferences.getLong(Config.STATE_KEY_POSITION_VP, 0);
         isPlaying = preferences.getBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, false);
+
+        if (savedInstanceState != null) {
+            positionPlayer = savedInstanceState.getLong("position", 0);
+            isPlaying = savedInstanceState.getBoolean("state", false);
+            Timber.d("To nie null XDDD " + positionPlayer + isPlaying);
+        }
 
     }
 
@@ -128,15 +134,17 @@ public class StepDetailFragment extends Fragment {
         Uri uri = Uri.parse(stepArrayList.get(positonStep).getVideoURL());
         MediaSource mediaSource = buildMediaSource(uri);
         player.prepare(mediaSource, true, false);
-        player.setPlayWhenReady(true);
+        player.setPlayWhenReady(isPlaying);
         player.seekTo(positionPlayer);
         setHasOptionsMenu(true);
     }
 
     private void releasePlayer() {
         if (player != null) {
-            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, false).apply();
-            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP, player.getCurrentPosition()).apply();
+            positionPlayer = player.getContentPosition();
+            isPlaying = player.getPlayWhenReady();
+            preferences.edit().putBoolean(Config.STATE_KEY_POSITION_VP_IS_PLAYING, isPlaying).apply();
+            preferences.edit().putLong(Config.STATE_KEY_POSITION_VP, positionPlayer).apply();
             player.release();
             player = null;
 
@@ -228,6 +236,9 @@ public class StepDetailFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putLong("position", positionPlayer);
+        outState.putBoolean("state", isPlaying);
+        Timber.d("zapinae XDDD " + positionPlayer + isPlaying);
         super.onSaveInstanceState(outState);
     }
 }
